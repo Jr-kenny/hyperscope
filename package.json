@@ -1,0 +1,25 @@
+{
+  "name": "hyperscope",
+  "version": "0.1.0",
+  "description": "Read-only Hyperliquid data tools for trading agents: open perp positions, vault review, and vault discovery. Built for the Bitget AI Hackathon S1 (Trading Infra track).",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "samples": "tsx scripts/gen-samples.ts"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.3"
+  }
+}

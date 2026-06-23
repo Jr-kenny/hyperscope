@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: hyperscope
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
