@@ -1,0 +1,872 @@
+{
+  "version": "0.1.0",
+  "service": "tearsheet",
+  "request": {
+    "wallet": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42"
+  },
+  "data": {
+    "wallet": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+    "metrics": {
+      "sample": {
+        "fills": 200,
+        "closingFills": 113,
+        "firstFillMs": 1780083039737,
+        "lastFillMs": 1782195678439,
+        "spanDays": 25
+      },
+      "pnl": {
+        "realized": 64881,
+        "fees": 49,
+        "net": 64832,
+        "bestDay": 22420.614542,
+        "worstDay": -0.399999
+      },
+      "ratios": {
+        "sharpe": 24.621007940292326,
+        "sortino": 1264148.7426294303,
+        "calmar": 1.3155974124949512e+75,
+        "profitFactor": null,
+        "expectancy": 574.1659453982302
+      },
+      "winLoss": {
+        "wins": 113,
+        "losses": 0,
+        "winRate": 1,
+        "avgWin": 574.1659453982302,
+        "avgLoss": 0
+      },
+      "concentration": {
+        "byCoin": [
+          {
+            "coin": "ONDO",
+            "realizedPnl": 34051,
+            "fills": 24,
+            "share": 0.5248244708572452
+          },
+          {
+            "coin": "HYPE",
+            "realizedPnl": 21603,
+            "fills": 154,
+            "share": 0.3329722097950603
+          },
+          {
+            "coin": "LAYER",
+            "realizedPnl": 9226,
+            "fills": 21,
+            "share": 0.1422033193476944
+          },
+          {
+            "coin": "WLD",
+            "realizedPnl": 0,
+            "fills": 1,
+            "share": 0
+          }
+        ],
+        "topCoin": "ONDO"
+      },
+      "monthly": [
+        {
+          "month": "2026-05",
+          "pnl": 29445
+        },
+        {
+          "month": "2026-06",
+          "pnl": 35387
+        }
+      ],
+      "dailyCurve": [
+        {
+          "time": 1780012800000,
+          "equity": 7023.9062570000015
+        },
+        {
+          "time": 1780099200000,
+          "equity": 29444.520799
+        },
+        {
+          "time": 1780358400000,
+          "equity": 29444.1208
+        },
+        {
+          "time": 1780617600000,
+          "equity": 46466.582544000004
+        },
+        {
+          "time": 1780704000000,
+          "equity": 60209.695699
+        },
+        {
+          "time": 1782172800000,
+          "equity": 64831.530698
+        }
+      ],
+      "maxDrawdown": -0.000013584836470312041,
+      "note": "realized-PnL curve (closed PnL minus fees), not continuous mark-to-market"
+    },
+    "exposure": {
+      "positionCount": 34,
+      "longNotional": 4262189,
+      "shortNotional": 2758323,
+      "totalUnrealizedPnl": 2921691,
+      "maxLeverage": 20,
+      "nearestLiquidationDistancePct": 3930.1,
+      "grossExposure": 7020512,
+      "netExposure": 1503866,
+      "netBias": 0.2142103026104079,
+      "byCoin": [
+        {
+          "coin": "HYPE",
+          "side": "long",
+          "notional": 4262189,
+          "unrealizedPnl": 224296,
+          "leverage": 10,
+          "share": 0.6071051547835827,
+          "liquidationDistancePct": null
+        },
+        {
+          "coin": "WLD",
+          "side": "short",
+          "notional": 211116,
+          "unrealizedPnl": -56116,
+          "leverage": 10,
+          "share": 0.030071370180266056,
+          "liquidationDistancePct": 7413
+        },
+        {
+          "coin": "TIA",
+          "side": "short",
+          "notional": 140919,
+          "unrealizedPnl": -919,
+          "leverage": 5,
+          "share": 0.02007245472523941,
+          "liquidationDistancePct": 8168
+        },
+        {
+          "coin": "GRASS",
+          "side": "short",
+          "notional": 137686,
+          "unrealizedPnl": -37686,
+          "leverage": 3,
+          "share": 0.019611895578271213,
+          "liquidationDistancePct": 10328.3
+        },
+        {
+          "coin": "AERO",
+          "side": "short",
+          "notional": 131235,
+          "unrealizedPnl": -11235,
+          "leverage": 3,
+          "share": 0.018693043578588,
+          "liquidationDistancePct": 8584.9
+        },
+        {
+          "coin": "ATOM",
+          "side": "short",
+          "notional": 107572,
+          "unrealizedPnl": 89428,
+          "leverage": 5,
+          "share": 0.015322561877538277,
+          "liquidationDistancePct": 5495
+        },
+        {
+          "coin": "ICP",
+          "side": "short",
+          "notional": 104740,
+          "unrealizedPnl": 30260,
+          "leverage": 5,
+          "share": 0.014919081981485111,
+          "liquidationDistancePct": 8062.2
+        },
+        {
+          "coin": "ASTER",
+          "side": "short",
+          "notional": 104050,
+          "unrealizedPnl": 50949,
+          "leverage": 3,
+          "share": 0.014820785201990967,
+          "liquidationDistancePct": 7008.7
+        },
+        {
+          "coin": "STABLE",
+          "side": "short",
+          "notional": 103596,
+          "unrealizedPnl": 16404,
+          "leverage": 3,
+          "share": 0.014756192023601698,
+          "liquidationDistancePct": 8562
+        },
+        {
+          "coin": "PYTH",
+          "side": "short",
+          "notional": 103339,
+          "unrealizedPnl": 135661,
+          "leverage": 5,
+          "share": 0.014719547745520556,
+          "liquidationDistancePct": 4509.9
+        },
+        {
+          "coin": "LAYER",
+          "side": "short",
+          "notional": 98310,
+          "unrealizedPnl": 159476,
+          "leverage": 3,
+          "share": 0.014003193523492304,
+          "liquidationDistancePct": 3930.1
+        },
+        {
+          "coin": "SEI",
+          "side": "short",
+          "notional": 95710,
+          "unrealizedPnl": 27166,
+          "leverage": 5,
+          "share": 0.013632846956176416,
+          "liquidationDistancePct": 8967.8
+        },
+        {
+          "coin": "CRV",
+          "side": "short",
+          "notional": 95189,
+          "unrealizedPnl": 119810,
+          "leverage": 10,
+          "share": 0.013558742522482691,
+          "liquidationDistancePct": 5262.4
+        },
+        {
+          "coin": "XRP",
+          "side": "short",
+          "notional": 86358,
+          "unrealizedPnl": 43642,
+          "leverage": 20,
+          "share": 0.012300759260863025,
+          "liquidationDistancePct": 8976.4
+        },
+        {
+          "coin": "AVNT",
+          "side": "short",
+          "notional": 83477,
+          "unrealizedPnl": 156521,
+          "leverage": 5,
+          "share": 0.01189040850581838,
+          "liquidationDistancePct": 4482.4
+        },
+        {
+          "coin": "STBL",
+          "side": "short",
+          "notional": 83429,
+          "unrealizedPnl": 36571,
+          "leverage": 3,
+          "share": 0.011883645364469146,
+          "liquidationDistancePct": 8545.1
+        },
+        {
+          "coin": "AVAX",
+          "side": "short",
+          "notional": 81610,
+          "unrealizedPnl": 123391,
+          "leverage": 10,
+          "share": 0.011624535647542514,
+          "liquidationDistancePct": 5517.4
+        },
+        {
+          "coin": "BLUR",
+          "side": "short",
+          "notional": 81190,
+          "unrealizedPnl": 141810,
+          "leverage": 3,
+          "share": 0.011564690031866621,
+          "liquidationDistancePct": 4551.1
+        },
+        {
+          "coin": "MERL",
+          "side": "short",
+          "notional": 79859,
+          "unrealizedPnl": 167279,
+          "leverage": 3,
+          "share": 0.011375147577555596,
+          "liquidationDistancePct": 4096.3
+        },
+        {
+          "coin": "SUI",
+          "side": "short",
+          "notional": 79434,
+          "unrealizedPnl": 90081,
+          "leverage": 10,
+          "share": 0.011314494517066563,
+          "liquidationDistancePct": 6692
+        },
+        {
+          "coin": "ZETA",
+          "side": "short",
+          "notional": 76485,
+          "unrealizedPnl": 136757,
+          "leverage": 3,
+          "share": 0.010894436109930444,
+          "liquidationDistancePct": 4761.7
+        },
+        {
+          "coin": "MINA",
+          "side": "short",
+          "notional": 76204,
+          "unrealizedPnl": 43796,
+          "leverage": 3,
+          "share": 0.010854448461593684,
+          "liquidationDistancePct": 8539
+        },
+        {
+          "coin": "IP",
+          "side": "short",
+          "notional": 75830,
+          "unrealizedPnl": 145169,
+          "leverage": 3,
+          "share": 0.010801270556050614,
+          "liquidationDistancePct": 4590.7
+        },
+        {
+          "coin": "APT",
+          "side": "short",
+          "notional": 71739,
+          "unrealizedPnl": 68261,
+          "leverage": 10,
+          "share": 0.010218546028551764,
+          "liquidationDistancePct": 8118.6
+        },
+        {
+          "coin": "ADA",
+          "side": "short",
+          "notional": 65575,
+          "unrealizedPnl": 152423,
+          "leverage": 10,
+          "share": 0.00934052711540127,
+          "liquidationDistancePct": 5175.1
+        },
+        {
+          "coin": "MORPHO",
+          "side": "short",
+          "notional": 60822,
+          "unrealizedPnl": -14299,
+          "leverage": 5,
+          "share": 0.00866351928463337,
+          "liquidationDistancePct": 23490.4
+        },
+        {
+          "coin": "BERA",
+          "side": "short",
+          "notional": 59761,
+          "unrealizedPnl": 205237,
+          "leverage": 5,
+          "share": 0.008512403082282318,
+          "liquidationDistancePct": 4041.2
+        },
+        {
+          "coin": "W",
+          "side": "short",
+          "notional": 56381,
+          "unrealizedPnl": 167179,
+          "leverage": 5,
+          "share": 0.008030825831506307,
+          "liquidationDistancePct": 4808.2
+        },
+        {
+          "coin": "ZORA",
+          "side": "short",
+          "notional": 52823,
+          "unrealizedPnl": 194178,
+          "leverage": 3,
+          "share": 0.007524049427306726,
+          "liquidationDistancePct": 4087.7
+        },
+        {
+          "coin": "ZRO",
+          "side": "short",
+          "notional": 52241,
+          "unrealizedPnl": 59759,
+          "leverage": 5,
+          "share": 0.007441169023284912,
+          "liquidationDistancePct": 9691.6
+        },
+        {
+          "coin": "XAI",
+          "side": "short",
+          "notional": 51579,
+          "unrealizedPnl": 100645,
+          "leverage": 3,
+          "share": 0.007346947019676058,
+          "liquidationDistancePct": 6694.7
+        },
+        {
+          "coin": "OP",
+          "side": "short",
+          "notional": 37252,
+          "unrealizedPnl": 146748,
+          "leverage": 5,
+          "share": 0.005306131596954752,
+          "liquidationDistancePct": 5925.1
+        },
+        {
+          "coin": "ONDO",
+          "side": "short",
+          "notional": 12547,
+          "unrealizedPnl": 9053,
+          "leverage": 10,
+          "share": 0.0017872476110004512,
+          "liquidationDistancePct": 51115.3
+        },
+        {
+          "coin": "NEAR",
+          "side": "short",
+          "notional": 266,
+          "unrealizedPnl": -3,
+          "leverage": 10,
+          "share": 0.000037906107132927054,
+          "liquidationDistancePct": 4352318.9
+        }
+      ],
+      "leverageBuckets": [
+        {
+          "leverage": 3,
+          "count": 13
+        },
+        {
+          "leverage": 5,
+          "count": 11
+        },
+        {
+          "leverage": 10,
+          "count": 9
+        },
+        {
+          "leverage": 20,
+          "count": 1
+        }
+      ]
+    },
+    "equityCurve": {
+      "source": "mark-to-market",
+      "method": "mark-to-market",
+      "spanDays": 293,
+      "finalEquity": 12513515.583725,
+      "peak": 14435125.520131,
+      "trough": 0,
+      "points": [
+        {
+          "time": 1756937880085,
+          "equity": 0
+        },
+        {
+          "time": 1756941480085,
+          "equity": 2143024.022958
+        },
+        {
+          "time": 1757548124665,
+          "equity": 5061488.519879
+        },
+        {
+          "time": 1758151842713,
+          "equity": 5217834.902286
+        },
+        {
+          "time": 1758754819048,
+          "equity": 3747962.023241
+        },
+        {
+          "time": 1759358210719,
+          "equity": 3543655.007957
+        },
+        {
+          "time": 1759965480024,
+          "equity": 3729252.578283
+        },
+        {
+          "time": 1760567179719,
+          "equity": 3101953.293435
+        },
+        {
+          "time": 1761177075911,
+          "equity": 2406281.491755
+        },
+        {
+          "time": 1761782348529,
+          "equity": 4013106.97825
+        },
+        {
+          "time": 1762387080072,
+          "equity": 3910575.673204
+        },
+        {
+          "time": 1762988157616,
+          "equity": 3980925.542606
+        },
+        {
+          "time": 1763595829722,
+          "equity": 5244642.549719
+        },
+        {
+          "time": 1764196819817,
+          "equity": 4851655.721375
+        },
+        {
+          "time": 1764804624076,
+          "equity": 4837241.868745
+        },
+        {
+          "time": 1765406450377,
+          "equity": 3637601.529251
+        },
+        {
+          "time": 1766013538289,
+          "equity": 2877676.814585
+        },
+        {
+          "time": 1766614604658,
+          "equity": 3682043.691221
+        },
+        {
+          "time": 1767223645997,
+          "equity": 3912697.456669
+        },
+        {
+          "time": 1767830280093,
+          "equity": 3352704.549074
+        },
+        {
+          "time": 1768431480066,
+          "equity": 2794641.352561
+        },
+        {
+          "time": 1769033199610,
+          "equity": 2662421.23929
+        },
+        {
+          "time": 1769643938393,
+          "equity": 3752850.275051
+        },
+        {
+          "time": 1770245623618,
+          "equity": 7241294.119708
+        },
+        {
+          "time": 1770851762358,
+          "equity": 6180744.461495
+        },
+        {
+          "time": 1771457969325,
+          "equity": 6108154.564783
+        },
+        {
+          "time": 1772063715368,
+          "equity": 5915317.808257
+        },
+        {
+          "time": 1772664796017,
+          "equity": 6704128.806818
+        },
+        {
+          "time": 1773273119844,
+          "equity": 7872375.057898
+        },
+        {
+          "time": 1773878369120,
+          "equity": 10945933.882141
+        },
+        {
+          "time": 1774482777513,
+          "equity": 10919937.23183
+        },
+        {
+          "time": 1775087692690,
+          "equity": 10413106.811418
+        },
+        {
+          "time": 1775692143449,
+          "equity": 10837923.714003
+        },
+        {
+          "time": 1776293880035,
+          "equity": 11453894.146826
+        },
+        {
+          "time": 1776902280042,
+          "equity": 10944504.200311
+        },
+        {
+          "time": 1777506309015,
+          "equity": 10806455.081168
+        },
+        {
+          "time": 1778105457877,
+          "equity": 11089104.045124
+        },
+        {
+          "time": 1778715480047,
+          "equity": 9259476.758327
+        },
+        {
+          "time": 1779319811571,
+          "equity": 12659780.738124
+        },
+        {
+          "time": 1779580124438,
+          "equity": 13107534.864282
+        },
+        {
+          "time": 1779838465477,
+          "equity": 13293019.808417
+        },
+        {
+          "time": 1780099115872,
+          "equity": 13887551.553029
+        },
+        {
+          "time": 1780355239047,
+          "equity": 14435125.520131
+        },
+        {
+          "time": 1780617316733,
+          "equity": 13991826.743075
+        },
+        {
+          "time": 1780876724418,
+          "equity": 11586622.553973
+        },
+        {
+          "time": 1781135219778,
+          "equity": 10347423.037903
+        },
+        {
+          "time": 1781394452062,
+          "equity": 11100422.859199
+        },
+        {
+          "time": 1781652370298,
+          "equity": 12320525.803996
+        },
+        {
+          "time": 1781913105749,
+          "equity": 13172361.483055
+        },
+        {
+          "time": 1782166578969,
+          "equity": 13002335.749178
+        },
+        {
+          "time": 1782249832050,
+          "equity": 12513515.583725
+        }
+      ]
+    },
+    "drawdown": {
+      "maxDrawdown": -0.5388352569950464,
+      "avgDrawdown": -0.21004743680471635,
+      "maxDurationMs": 6048108671,
+      "currentDrawdown": -0.13312041753472476,
+      "underwater": [
+        {
+          "time": 1756937880085,
+          "drawdown": 0
+        },
+        {
+          "time": 1756941480085,
+          "drawdown": 0
+        },
+        {
+          "time": 1757548124665,
+          "drawdown": 0
+        },
+        {
+          "time": 1758151842713,
+          "drawdown": 0
+        },
+        {
+          "time": 1758754819048,
+          "drawdown": -0.28170168404543233
+        },
+        {
+          "time": 1759358210719,
+          "drawdown": -0.3208571995245615
+        },
+        {
+          "time": 1759965480024,
+          "drawdown": -0.28528735613133965
+        },
+        {
+          "time": 1760567179719,
+          "drawdown": -0.4055094974208565
+        },
+        {
+          "time": 1761177075911,
+          "drawdown": -0.5388352569950464
+        },
+        {
+          "time": 1761782348529,
+          "drawdown": -0.23088655478696593
+        },
+        {
+          "time": 1762387080072,
+          "drawdown": -0.2505367175395436
+        },
+        {
+          "time": 1762988157616,
+          "drawdown": -0.23705413889927682
+        },
+        {
+          "time": 1763595829722,
+          "drawdown": 0
+        },
+        {
+          "time": 1764196819817,
+          "drawdown": -0.07493109866277849
+        },
+        {
+          "time": 1764804624076,
+          "drawdown": -0.07767939895080705
+        },
+        {
+          "time": 1765406450377,
+          "drawdown": -0.3064157385814793
+        },
+        {
+          "time": 1766013538289,
+          "drawdown": -0.451311164239557
+        },
+        {
+          "time": 1766614604658,
+          "drawdown": -0.29794191762062444
+        },
+        {
+          "time": 1767223645997,
+          "drawdown": -0.2539629880250588
+        },
+        {
+          "time": 1767830280093,
+          "drawdown": -0.36073726335198325
+        },
+        {
+          "time": 1768431480066,
+          "drawdown": -0.46714359919328874
+        },
+        {
+          "time": 1769033199610,
+          "drawdown": -0.49235410915989913
+        },
+        {
+          "time": 1769643938393,
+          "drawdown": -0.2844411722106644
+        },
+        {
+          "time": 1770245623618,
+          "drawdown": 0
+        },
+        {
+          "time": 1770851762358,
+          "drawdown": -0.14645858056318886
+        },
+        {
+          "time": 1771457969325,
+          "drawdown": -0.1564830175646411
+        },
+        {
+          "time": 1772063715368,
+          "drawdown": -0.18311316865892877
+        },
+        {
+          "time": 1772664796017,
+          "drawdown": -0.07418084447475261
+        },
+        {
+          "time": 1773273119844,
+          "drawdown": 0
+        },
+        {
+          "time": 1773878369120,
+          "drawdown": 0
+        },
+        {
+          "time": 1774482777513,
+          "drawdown": -0.002375005238558402
+        },
+        {
+          "time": 1775087692690,
+          "drawdown": -0.048678082332686196
+        },
+        {
+          "time": 1775692143449,
+          "drawdown": -0.009867606483008712
+        },
+        {
+          "time": 1776293880035,
+          "drawdown": 0
+        },
+        {
+          "time": 1776902280042,
+          "drawdown": -0.044473079634331954
+        },
+        {
+          "time": 1777506309015,
+          "drawdown": -0.05652567217389674
+        },
+        {
+          "time": 1778105457877,
+          "drawdown": -0.031848565826242445
+        },
+        {
+          "time": 1778715480047,
+          "drawdown": -0.19158701489371613
+        },
+        {
+          "time": 1779319811571,
+          "drawdown": 0
+        },
+        {
+          "time": 1779580124438,
+          "drawdown": 0
+        },
+        {
+          "time": 1779838465477,
+          "drawdown": 0
+        },
+        {
+          "time": 1780099115872,
+          "drawdown": 0
+        },
+        {
+          "time": 1780355239047,
+          "drawdown": 0
+        },
+        {
+          "time": 1780617316733,
+          "drawdown": -0.03070972790903562
+        },
+        {
+          "time": 1780876724418,
+          "drawdown": -0.19733136107375868
+        },
+        {
+          "time": 1781135219778,
+          "drawdown": -0.2831774809666431
+        },
+        {
+          "time": 1781394452062,
+          "drawdown": -0.23101306990933157
+        },
+        {
+          "time": 1781652370298,
+          "drawdown": -0.14648987382797685
+        },
+        {
+          "time": 1781913105749,
+          "drawdown": -0.08747856298963035
+        },
+        {
+          "time": 1782166578969,
+          "drawdown": -0.09925717438028879
+        },
+        {
+          "time": 1782249832050,
+          "drawdown": -0.13312041753472476
+        }
+      ],
+      "method": "mark-to-market",
+      "spanDays": 293
+    }
+  }
+}

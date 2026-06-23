@@ -1,0 +1,21 @@
+{
+  "version": "0.1.0",
+  "service": "coin",
+  "request": {
+    "coin": "BTC"
+  },
+  "data": {
+    "coin": "BTC",
+    "markPrice": 62475,
+    "oraclePrice": 62503,
+    "midPrice": 62484.5,
+    "fundingHourly": 0.0000110137,
+    "fundingAnnualized": 0.09648001199999999,
+    "openInterest": 32535.13402,
+    "openInterestNotional": 2032632497.8995001,
+    "dayNotionalVolume": 2707955041.096692,
+    "dayChange": -0.028050032670587137,
+    "premium": -0.0002879862,
+    "maxLeverage": 40
+  }
+}

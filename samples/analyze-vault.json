@@ -1,0 +1,26 @@
+{
+  "version": "0.1.0",
+  "service": "analyze-vault",
+  "request": {
+    "vault": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303"
+  },
+  "data": {
+    "vault": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+    "analysis": {
+      "verdict": "follow",
+      "score": 80,
+      "summary": "The Hyperliquidity Provider vault offers an attractive APR with no leader commission, a sizable follower count, and open deposits, making it a compelling option. However, the sustainability of the 18% APR should be monitored. Overall, the vault's community-owned nature and diverse strategies contribute to its appeal.",
+      "pros": [
+        "High APR of 18%",
+        "No leader commission",
+        "Large follower count of 100",
+        "Open for deposits",
+        "Community-owned and diverse strategies"
+      ],
+      "cons": [
+        "APR may not be sustainable long-term",
+        "Market and liquidity risks associated with market making strategies"
+      ]
+    }
+  }
+}

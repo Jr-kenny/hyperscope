@@ -14,7 +14,7 @@
 
 <div class="nav">
   <div class="wrap">
-    <div class="brand"><a href="/" style="display:flex;align-items:center;gap:12px"><span class="mark">H</span><b>HyperScope</b></a><span class="crumb">/ APP</span></div>
+    <div class="brand"><a href="/" style="display:flex;align-items:center;gap:12px"><span class="mark">H</span><b>HyperScope</b></a><span class="crumb" id="crumb">/ APP</span></div>
     <div class="nav-right">
       <span class="ghost" id="aiGhost">AI checking…</span>
       <a class="ghost-link" href="https://github.com/Jr-kenny/hyperscope" target="_blank" rel="noopener">Source</a>
@@ -23,15 +23,25 @@
 </div>
 
 <div class="wrap">
-  <div class="app">
-    <!-- SIDEBAR -->
-    <aside class="side">
-      <a class="side-back" href="/">← Back to home</a>
-      <div class="side-h">Services</div>
-      <div class="side-list" id="sideList"></div>
-    </aside>
 
-    <!-- WORKSPACE -->
+  <!-- CATALOG: the list of services you land on -->
+  <section class="catalog" id="catalog" hidden>
+    <div class="cat-head">
+      <h2>Services</h2>
+      <p>Pick a tool to run it against live Hyperliquid data. Each one is its own page with a one-click try.</p>
+    </div>
+    <div class="search">
+      <span class="search-ico">⌕</span>
+      <input id="svcSearch" placeholder="Search services" autocomplete="off" spellcheck="false">
+      <kbd class="search-kbd">/</kbd>
+    </div>
+    <div class="svc-grid" id="catGrid"></div>
+    <div class="cat-empty" id="catEmpty" hidden>No service matches that. Try “vault”, “risk” or “positions”.</div>
+  </section>
+
+  <!-- SERVICE PAGE: one service in focus, nothing else -->
+  <div class="service" id="workspace" hidden>
+    <a class="side-back" href="/app" id="backCatalog">← All services</a>
     <main class="work">
       <div class="work-head">
         <h2 id="wTitle">—</h2>
@@ -50,6 +60,11 @@ const fmtUsd = n => "$"+Number(n).toLocaleString(undefined,{maximumFractionDigit
 const fmtUsdC = n => { n=Number(n); if(n>=1e9)return "$"+(n/1e9).toFixed(2)+"B"; if(n>=1e6)return "$"+(n/1e6).toFixed(2)+"M"; if(n>=1e3)return "$"+(n/1e3).toFixed(1)+"K"; return "$"+n.toFixed(0); };
 const fmtNum = n => Number(n).toLocaleString(undefined,{maximumFractionDigits:4});
 const pct = n => (Number(n)*100).toFixed(2)+"%";
+// Unbounded ratios (Sharpe/Sortino/Calmar) blow up on tiny or near-zero-vol
+// samples; round to 2dp, and cap absurd magnitudes so they don't overflow the
+// card. null/non-finite (e.g. a zero-drawdown Calmar) shows as ∞.
+const fmtRatio = x => (x==null||!isFinite(Number(x))) ? "∞"
+  : Math.abs(x)>=1000 ? (x>0?">999":"<-999") : Number(x).toFixed(2);
 const short = a => a.slice(0,6)+"…"+a.slice(-4);
 const hlLink = a => `https://app.hyperliquid.xyz/explorer/address/${a}`;
 const signCls = n => Number(n)>=0?"pos":"neg";
@@ -63,6 +78,7 @@ let aiOn=false;
 const SERVICES = {
   positions: {
     icon:"P", name:"Wallet Positions", sub:"POST",
+    desc:"Open perpetual positions for any wallet, normalized: side, size, entry, value, uPnL, ROE, liquidation, leverage.",
     title:"Wallet Positions", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">SLA &lt; 2s</span>'],
     lead:"Open perpetual positions for any wallet, fully normalized.",
     form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run" id="go">Run</button></div>
@@ -72,6 +88,7 @@ const SERVICES = {
   },
   airisk: {
     icon:"✦", name:"AI Risk Read", sub:"AI · POST", ai:true,
+    desc:"A grounded risk assessment of a wallet's positions: risk level, net directional bias, and the signals behind it.",
     title:"AI Risk Read", meta:['<span class="mbadge ai">✦ AI</span>','<span class="mbadge method">POST</span>'],
     lead:"Feed a wallet's positions to a model and get a grounded risk assessment.",
     form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run lime" id="go">✦ Analyze</button></div>
@@ -82,6 +99,7 @@ const SERVICES = {
   },
   vault: {
     icon:"V", name:"Vault Review", sub:"POST",
+    desc:"Full breakdown of a single vault: leader, strategy, APR, followers, commission, deposit and withdraw capacity.",
     title:"Vault Review", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">SLA &lt; 2s</span>'],
     lead:"Full breakdown of a single vault.",
     form:`<p class="field">Vault address</p><div class="row"><input id="in" placeholder="0x… vault address" spellcheck="false"><button class="run" id="go">Run</button></div>
@@ -91,6 +109,7 @@ const SERVICES = {
   },
   aivault: {
     icon:"✦", name:"AI Vault Verdict", sub:"AI · POST", ai:true,
+    desc:"Due diligence on a vault, then a follow / watch / avoid verdict with a score and the case for and against.",
     title:"AI Vault Verdict", meta:['<span class="mbadge ai">✦ AI</span>','<span class="mbadge method">POST</span>'],
     lead:"Due diligence on a vault, then a follow / watch / avoid verdict.",
     form:`<p class="field">Vault address</p><div class="row"><input id="in" placeholder="0x… vault address" spellcheck="false"><button class="run lime" id="go">✦ Get verdict</button></div>
@@ -101,6 +120,7 @@ const SERVICES = {
   },
   vaults: {
     icon:"D", name:"Discover Vaults", sub:"GET",
+    desc:"A sortable shortlist across every live vault. Rank by TVL, APR or age, out of thousands.",
     title:"Discover Vaults", meta:['<span class="mbadge method">GET</span>','<span class="mbadge">cached</span>'],
     lead:"A sortable shortlist across every live vault.",
     form:`<p class="field">Query</p><div class="row">
@@ -110,8 +130,124 @@ const SERVICES = {
       <button class="run" id="go">Run</button></div>`,
     run: async (out)=>{ const sort=$("#sortIn").value,order=$("#orderIn").value,limit=$("#limitIn").value;
       load(out,"Loading vaults…"); const d=await call(`/vaults?sort=${sort}&order=${order}&limit=${limit}`); renderVaults(d,out); }
+  },
+  coin: {
+    icon:"C", name:"Coin Market", sub:"POST",
+    desc:"Mark, oracle and mid price, funding (hourly and annualized), open interest, 24h volume and change for any perp.",
+    title:"Coin Market & Funding", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">SLA &lt; 2s</span>'],
+    lead:"Live market context an agent needs before it sizes a perp: price, funding, open interest, volume.",
+    form:`<p class="field">Coin symbol</p><div class="row"><input id="in" placeholder="BTC, ETH, SOL…" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="BTC">try: BTC</span><span class="chip" data-val="ETH">try: ETH</span><span class="chip" data-val="SOL">try: SOL</span></div>`,
+    run: async (out)=>{ const c=$("#in").value.trim(); if(!c) return err(out,"Enter a coin symbol, e.g. BTC.");
+      load(out,"Loading market…"); const d=await call("/coin",P({coin:c})); renderCoin(d,out); }
+  },
+  book: {
+    icon:"B", name:"Order Book", sub:"POST",
+    desc:"Best bid and ask, mid, spread in bps and resting depth on each side, so an agent can check liquidity before sizing.",
+    title:"Order Book Depth", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">SLA &lt; 2s</span>'],
+    lead:"Top of book and resting depth for any perp: spread, and how much size sits on each side.",
+    form:`<p class="field">Coin symbol</p><div class="row"><input id="in" placeholder="BTC, ETH, SOL…" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="BTC">try: BTC</span><span class="chip" data-val="ETH">try: ETH</span></div>`,
+    run: async (out)=>{ const c=$("#in").value.trim(); if(!c) return err(out,"Enter a coin symbol, e.g. BTC.");
+      load(out,"Loading book…"); const d=await call("/book",P({coin:c,depth:10})); renderBook(d,out); }
+  },
+  fills: {
+    icon:"H", name:"Trade History", sub:"POST",
+    desc:"A wallet's recent fills with realized PnL, win rate and volume: the track record, not just the current snapshot.",
+    title:"Wallet Trade History", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">SLA &lt; 2s</span>'],
+    lead:"Recent fills for a wallet with realized PnL, win rate and volume.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      load(out,"Loading fills…"); const d=await call("/fills",P({wallet:w,limit:50})); renderFills(d,out); }
+  },
+  compare: {
+    icon:"≡", name:"Vault Compare", sub:"POST",
+    desc:"Put several vaults side by side, ranked by APR, with followers, leader fee and size: a quick strategy shortlist.",
+    title:"Vault Compare", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">SLA &lt; 2s</span>'],
+    lead:"Two or more vaults side by side, ranked by APR.",
+    form:`<p class="field">Vault addresses (comma separated)</p><div class="row"><input id="in" placeholder="0x…, 0x…" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xdfc24b077bc1425ad1dea75bcb6f8158e10df303, 0xb0a55f13d22f66e6d495ac98113841b2326e9540">try: two HLP vaults</span></div>`,
+    run: async (out)=>{ const list=$("#in").value.split(/[\s,]+/).map(s=>s.trim()).filter(Boolean);
+      if(list.length<2) return err(out,"Enter at least two 0x vault addresses, comma separated.");
+      load(out,"Comparing vaults…"); const d=await call("/compare",P({vaults:list})); renderCompare(d,out); }
+  },
+  // ---- monitoring + evaluation services -----------------------------------
+  metrics: {
+    icon:"M", name:"Strategy Metrics", sub:"EVAL · POST",
+    desc:"Sharpe, Sortino, Calmar, profit factor, expectancy, win/loss stats, max drawdown, PnL concentration by coin, and monthly heatmap data from a wallet's trade history.",
+    title:"Strategy Metrics", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">EVAL</span>'],
+    lead:"Performance ratios from a wallet's trade history.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      load(out,"Computing metrics…"); const d=await call("/metrics",P({wallet:w})); renderMetrics(d,out); }
+  },
+  exposure: {
+    icon:"E", name:"Position Exposure", sub:"MONITOR · POST",
+    desc:"Live exposure breakdown: long/short notional, net bias, per-coin concentration, leverage distribution, liquidation proximity. The monitoring layer.",
+    title:"Position Exposure", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">MONITOR</span>'],
+    lead:"Live exposure breakdown from open positions.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      load(out,"Loading exposure…"); const d=await call("/exposure",P({wallet:w})); renderExposure(d,out); }
+  },
+  equity: {
+    icon:"📈", name:"Equity Curve", sub:"MONITOR · POST",
+    desc:"Reconstructed realized equity curve from fills, funding, and deposits/withdrawals. Plotting-ready point series.",
+    title:"Equity Curve", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">MONITOR</span>'],
+    lead:"Realized equity reconstructed from fills, funding, and capital flows.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      load(out,"Reconstructing equity…"); const d=await call("/equity_curve",P({wallet:w})); renderEquity(d,out); }
+  },
+  equity_mtm: {
+    icon:"💹", name:"MTM Equity", sub:"MONITOR · POST",
+    desc:"Continuous mark-to-market account value over time from Hyperliquid's native portfolio history, with drawdown. The live-equity counterpart to the realized curve.",
+    title:"Mark-to-Market Equity", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">MONITOR</span>'],
+    lead:"Continuous account value (margin + uPnL) straight from Hyperliquid's portfolio history.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false">
+      <select id="periodIn"><option value="allTime" selected>All time</option><option value="month">Month</option><option value="week">Week</option><option value="day">Day</option></select>
+      <button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      const period=$("#periodIn").value; load(out,"Loading account value…"); const d=await call("/equity_mtm",P({wallet:w,period})); renderMtm(d,out); }
+  },
+  dd: {
+    icon:"📉", name:"Drawdown", sub:"MONITOR · POST",
+    desc:"Underwater curve and drawdown stats: max DD, average DD, max duration, current DD.",
+    title:"Drawdown Analysis", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">MONITOR</span>'],
+    lead:"How deep and how long the wallet went underwater.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      load(out,"Computing drawdown…"); const d=await call("/drawdown",P({wallet:w})); renderDrawdown(d,out); }
+  },
+  tearsheet: {
+    icon:"📋", name:"Tearsheet", sub:"EVAL · POST",
+    desc:"One-call strategy evaluation rollup: metrics, exposure, equity curve, and drawdown. Everything to evaluate a wallet in a single call.",
+    title:"Full Tearsheet", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">EVAL</span>'],
+    lead:"Metrics + exposure + equity + drawdown in one call.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      load(out,"Building tearsheet…"); const d=await call("/tearsheet",P({wallet:w})); renderTearsheet(d,out); }
+  },
+  aiperf: {
+    icon:"✦", name:"AI Performance Read", sub:"AI · EVAL · POST", ai:true,
+    desc:"Full track record analysis: fills metrics + exposure + equity curve fed to a model for an edge assessment. Real, fading, or absent.",
+    title:"AI Performance Read", meta:['<span class="mbadge ai">✦ AI</span>','<span class="mbadge method">POST</span>'],
+    lead:"Is this wallet's edge real, fading, or absent?",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run lime" id="go">✦ Analyze</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      if(!aiOn) return out.innerHTML=aiNote(); load(out,"✦ Evaluating performance… (model thinking)");
+      const d=await call("/analyze/performance",P({wallet:w})); renderPerformance(d.analysis,out); }
   }
 };
+const order=["positions","airisk","fills","metrics","exposure","equity","equity_mtm","dd","tearsheet","aiperf","coin","book","vault","aivault","vaults","compare"];
 const P = body => ({method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
 const load=(out,m)=>out.innerHTML=`<div class="status">${m}</div>`;
 const err=(out,m)=>out.innerHTML=`<div class="status err">${m}</div>`;
@@ -152,19 +288,252 @@ function renderVaults(d,out){ const rows=d.vaults.map((v,i)=>`<tr><td>${i+1}</td
   <td class="${v.status==='open'?'long':'short'}">${v.status}</td><td>${new Date(v.createTimeMillis).toLocaleDateString()}</td></tr>`).join("");
   out.innerHTML=`<div class="status">Showing ${d.count} of ${d.total.toLocaleString()} vaults</div>
   <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Address</th><th>TVL</th><th>APR</th><th>Status</th><th>Created</th></tr></thead><tbody>${rows}</tbody></table></div>`; }
+function renderCoin(d,out){ out.innerHTML=`<div class="cards">
+  <div class="mini"><div class="k">Mark</div><div class="v">${fmtUsd(d.markPrice)}</div></div>
+  <div class="mini"><div class="k">Oracle</div><div class="v">${fmtUsd(d.oraclePrice)}</div></div>
+  <div class="mini"><div class="k">24h change</div><div class="v ${signCls(d.dayChange)}">${pct(d.dayChange)}</div></div>
+  <div class="mini"><div class="k">Funding 1h</div><div class="v ${signCls(d.fundingHourly)}">${(d.fundingHourly*100).toFixed(4)}%</div></div>
+  <div class="mini"><div class="k">Funding APR</div><div class="v ${signCls(d.fundingAnnualized)}">${pct(d.fundingAnnualized)}</div></div>
+  <div class="mini"><div class="k">Open interest</div><div class="v">${fmtUsdC(d.openInterestNotional)}</div></div>
+  <div class="mini"><div class="k">24h volume</div><div class="v">${fmtUsdC(d.dayNotionalVolume)}</div></div>
+  <div class="mini"><div class="k">Max leverage</div><div class="v">${d.maxLeverage}×</div></div></div>`; }
+function renderBook(d,out){
+  const rows=(side,cls)=>side.map(l=>`<tr><td class="${cls}">${fmtUsd(l.price)}</td><td>${fmtNum(l.size)}</td><td>${l.orders}</td></tr>`).join("");
+  out.innerHTML=`<div class="cards">
+    <div class="mini"><div class="k">Best bid</div><div class="v long">${fmtUsd(d.bestBid)}</div></div>
+    <div class="mini"><div class="k">Best ask</div><div class="v short">${fmtUsd(d.bestAsk)}</div></div>
+    <div class="mini"><div class="k">Mid</div><div class="v">${fmtUsd(d.mid)}</div></div>
+    <div class="mini"><div class="k">Spread</div><div class="v">${d.spreadBps.toFixed(2)} bps</div></div>
+    <div class="mini"><div class="k">Bid depth</div><div class="v">${fmtUsdC(d.bidDepthNotional)}</div></div>
+    <div class="mini"><div class="k">Ask depth</div><div class="v">${fmtUsdC(d.askDepthNotional)}</div></div></div>
+  <div class="twocol" style="margin-top:14px">
+    <div><h4>Bids</h4><div class="tbl-wrap"><table><thead><tr><th>Price</th><th>Size</th><th>Orders</th></tr></thead><tbody>${rows(d.bids,'long')}</tbody></table></div></div>
+    <div><h4>Asks</h4><div class="tbl-wrap"><table><thead><tr><th>Price</th><th>Size</th><th>Orders</th></tr></thead><tbody>${rows(d.asks,'short')}</tbody></table></div></div></div>`; }
+function renderFills(d,out){
+  if(!d.count) return out.innerHTML=`<div class="status">No fills for this wallet.</div>`;
+  const rows=d.fills.map(f=>`<tr><td class="name-sans">${f.coin}</td><td class="${f.side==='buy'?'long':'short'}">${f.side.toUpperCase()}</td>
+    <td>${fmtUsd(f.price)}</td><td>${fmtNum(f.size)}</td><td>${fmtUsdC(f.notional)}</td>
+    <td class="${signCls(f.closedPnl)}">${f.closedPnl?fmtUsd(f.closedPnl):'—'}</td><td>${f.dir}</td>
+    <td>${new Date(f.time).toLocaleString()}</td></tr>`).join("");
+  out.innerHTML=`<div class="cards">
+    <div class="mini"><div class="k">Fills shown</div><div class="v">${d.count}</div></div>
+    <div class="mini"><div class="k">Realized PnL</div><div class="v ${signCls(d.realizedPnl)}">${fmtUsd(d.realizedPnl)}</div></div>
+    <div class="mini"><div class="k">Win rate</div><div class="v">${pct(d.winRate)}</div></div>
+    <div class="mini"><div class="k">Volume</div><div class="v">${fmtUsdC(d.totalVolume)}</div></div>
+    <div class="mini"><div class="k">Fees</div><div class="v">${fmtUsd(d.totalFees)}</div></div></div>
+  <div class="tbl-wrap" style="margin-top:14px"><table><thead><tr><th>Coin</th><th>Side</th><th>Price</th><th>Size</th><th>Value</th><th>Closed PnL</th><th>Dir</th><th>Time</th></tr></thead><tbody>${rows}</tbody></table></div>`; }
+function renderCompare(d,out){
+  const rows=d.vaults.map((v,i)=>`<tr><td>${i+1}</td><td class="name-sans">${v.name}</td>
+    <td><a href="${hlLink(v.vaultAddress)}" target="_blank">${short(v.vaultAddress)}</a></td>
+    <td class="${signCls(v.apr)}">${pct(v.apr)}</td><td>${v.followerCount}</td>
+    <td>${pct(v.leaderCommission)}</td><td>${fmtUsdC(v.tvl)}</td>
+    <td class="${v.isClosed?'short':'long'}">${v.isClosed?'closed':'open'}</td></tr>`).join("");
+  out.innerHTML=`<div class="status">${d.count} vaults, ranked by APR</div>
+  <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Address</th><th>APR</th><th>Followers</th><th>Fee</th><th>Size</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>`; }
 
-/* build sidebar */
-const order=["positions","airisk","vault","aivault","vaults"];
-$("#sideList").innerHTML = order.map(id=>{ const s=SERVICES[id];
-  return `<a class="side-item" data-id="${id}" href="/app?s=${id}"><span class="si-ico">${s.icon}</span>
-    <span><span class="si-name">${s.name}</span><br><span class="si-sub">${s.sub}</span></span></a>`;
+/* ---- monitoring + evaluation renderers ---------------------------------- */
+function renderMetrics(d,out){
+  if(d.note) out.innerHTML=`<div class="status">${d.note}</div>`; else out.innerHTML="";
+  const r=d.ratios, w=d.winLoss, p=d.pnl, s=d.sample;
+  // ratio cards
+  out.innerHTML+=`<div class="cards">
+    <div class="mini"><div class="k">Sharpe</div><div class="v">${fmtRatio(r.sharpe)}</div></div>
+    <div class="mini"><div class="k">Sortino</div><div class="v">${fmtRatio(r.sortino)}</div></div>
+    <div class="mini"><div class="k">Calmar</div><div class="v">${fmtRatio(r.calmar)}</div></div>
+    <div class="mini"><div class="k">Profit Factor</div><div class="v ${r.profitFactor==null?'pos':signCls(r.profitFactor-1)}">${r.profitFactor==null?'∞':r.profitFactor.toFixed(2)}</div></div>
+    <div class="mini"><div class="k">Expectancy</div><div class="v ${signCls(r.expectancy)}">${fmtUsd(r.expectancy)}</div></div>
+    <div class="mini"><div class="k">Max DD</div><div class="v neg">${pct(d.maxDrawdown)}</div></div></div>
+  <div class="cards" style="margin-top:12px">
+    <div class="mini"><div class="k">Win Rate</div><div class="v">${pct(w.winRate)}</div></div>
+    <div class="mini"><div class="k">Avg Win</div><div class="v pos">${fmtUsd(w.avgWin)}</div></div>
+    <div class="mini"><div class="k">Avg Loss</div><div class="v neg">${fmtUsd(Math.abs(w.avgLoss))}</div></div>
+    <div class="mini"><div class="k">Wins / Losses</div><div class="v">${w.wins} / ${w.losses}</div></div>
+    <div class="mini"><div class="k">Realized PnL</div><div class="v ${signCls(p.realized)}">${fmtUsd(p.realized)}</div></div>
+    <div class="mini"><div class="k">Net (after fees)</div><div class="v ${signCls(p.net)}">${fmtUsd(p.net)}</div></div></div>
+  <div class="cards" style="margin-top:12px">
+    <div class="mini"><div class="k">Fills</div><div class="v">${s.fills}</div></div>
+    <div class="mini"><div class="k">Span</div><div class="v">${s.spanDays} day${s.spanDays!==1?"s":""}</div></div>
+    <div class="mini"><div class="k">Best Day</div><div class="v pos">${fmtUsd(p.bestDay)}</div></div>
+    <div class="mini"><div class="k">Worst Day</div><div class="v neg">${fmtUsd(p.worstDay)}</div></div>
+    <div class="mini"><div class="k">Total Fees</div><div class="v">${fmtUsd(p.fees)}</div></div>
+    <div class="mini"><div class="k">Top Coin</div><div class="v">${d.concentration.topCoin||"—"}</div></div></div>`;
+  // concentration table
+  if(d.concentration.byCoin.length){
+    const crows=d.concentration.byCoin.map(c=>`<tr><td class="name-sans">${c.coin}</td>
+      <td>${c.fills}</td><td class="${signCls(c.realizedPnl)}">${fmtUsd(c.realizedPnl)}</td>
+      <td>${(c.share*100).toFixed(1)}%</td></tr>`).join("");
+    out.innerHTML+=`<h4 style="margin-top:18px">PnL by coin</h4>
+      <div class="tbl-wrap"><table><thead><tr><th>Coin</th><th>Fills</th><th>Realized PnL</th><th>Share</th></tr></thead><tbody>${crows}</tbody></table></div>`;
+  }
+  // monthly heatmap
+  if(d.monthly.length){
+    const mrows=d.monthly.map(m=>`<tr><td>${m.month}</td><td class="${signCls(m.pnl)}">${fmtUsd(m.pnl)}</td></tr>`).join("");
+    out.innerHTML+=`<h4 style="margin-top:18px">Monthly PnL</h4>
+      <div class="tbl-wrap"><table><thead><tr><th>Month</th><th>PnL</th></tr></thead><tbody>${mrows}</tbody></table></div>`;
+  }
+}
+function renderExposure(d,out){
+  if(!d.positionCount) return out.innerHTML=`<div class="status">No open positions for this wallet.</div>`;
+  const biasPct=(d.netBias*100).toFixed(1);
+  const biasLabel=d.netBias>0.05?"LONG":d.netBias<-0.05?"SHORT":"NEUTRAL";
+  const biasCls=d.netBias>0.05?"pos":d.netBias<-0.05?"neg":"muted";
+  // bias bar
+  out.innerHTML=`<div class="cards">
+    <div class="mini"><div class="k">Positions</div><div class="v">${d.positionCount}</div></div>
+    <div class="mini"><div class="k">Long Notional</div><div class="v pos">${fmtUsdC(d.longNotional)}</div></div>
+    <div class="mini"><div class="k">Short Notional</div><div class="v neg">${fmtUsdC(d.shortNotional)}</div></div>
+    <div class="mini"><div class="k">Net Exposure</div><div class="v">${fmtUsdC(d.netExposure)}</div></div>
+    <div class="mini"><div class="k">Gross Exposure</div><div class="v">${fmtUsdC(d.grossExposure)}</div></div>
+    <div class="mini"><div class="k">Net Bias</div><div class="v ${biasCls}">${biasLabel} ${biasPct}%</div></div></div>
+  <div class="cards" style="margin-top:12px">
+    <div class="mini"><div class="k">Max Leverage</div><div class="v">${d.maxLeverage}×</div></div>
+    <div class="mini"><div class="k">Total uPnL</div><div class="v ${signCls(d.totalUnrealizedPnl)}">${fmtUsd(d.totalUnrealizedPnl)}</div></div>
+    <div class="mini"><div class="k">Nearest Liq. Dist.</div><div class="v">${d.nearestLiquidationDistancePct!==null?d.nearestLiquidationDistancePct.toFixed(1)+"%":"—"}</div></div></div>`;
+  // leverage buckets
+  if(d.leverageBuckets.length>1){
+    const lrows=d.leverageBuckets.map(b=>`<tr><td>${b.leverage}×</td><td>${b.count}</td></tr>`).join("");
+    out.innerHTML+=`<h4 style="margin-top:18px">Leverage distribution</h4>
+      <div class="tbl-wrap"><table><thead><tr><th>Leverage</th><th>Positions</th></tr></thead><tbody>${lrows}</tbody></table></div>`;
+  }
+  // per-coin breakdown
+  const brows=d.byCoin.map(c=>`<tr><td class="name-sans">${c.coin}</td><td class="${c.side}">${c.side.toUpperCase()}</td>
+    <td>${fmtUsdC(c.notional)}</td><td class="${signCls(c.unrealizedPnl)}">${fmtUsd(c.unrealizedPnl)}</td>
+    <td>${c.leverage}×</td><td>${c.liquidationDistancePct!==null?c.liquidationDistancePct.toFixed(1)+"%":"—"}</td></tr>`).join("");
+  out.innerHTML+=`<h4 style="margin-top:18px">By coin</h4>
+    <div class="tbl-wrap"><table><thead><tr><th>Coin</th><th>Side</th><th>Notional</th><th>uPnL</th><th>Leverage</th><th>Liq. Dist.</th></tr></thead><tbody>${brows}</tbody></table></div>`;
+}
+// Inline SVG sparkline generator — zero deps, matches the vanilla-JS philosophy.
+function sparkSvg(points,width,h,color){
+  if(!points.length) return `<svg width="${width}" height="${h}"></svg>`;
+  const vals=points.map(p=>p.equity);
+  const mn=Math.min(...vals), mx=Math.max(...vals);
+  const range=mx-mn||1;
+  const step=width/(points.length-1||1);
+  const pts=points.map((p,i)=>`${(i*step).toFixed(1)},${(h-((p.equity-mn)/range)*(h-4)-2).toFixed(1)}`).join(" ");
+  return `<svg width="${width}" height="${h}" style="display:block;margin-top:14px"><polyline fill="none" stroke="${color}" stroke-width="1.5" points="${pts}"/></svg>`;
+}
+// Underwater area SVG for drawdown
+function ddSvg(points,width,h,color){
+  if(!points.length) return `<svg width="${width}" height="${h}"></svg>`;
+  const vals=points.map(p=>p.drawdown);
+  const mn=Math.min(...vals); // most negative
+  const range=Math.abs(mn)||1;
+  const step=width/(points.length-1||1);
+  const line=points.map((p,i)=>`${(i*step).toFixed(1)},${(Math.abs(p.drawdown)/range*(h-4)+2).toFixed(1)}`).join(" ");
+  const area=`0,${h} `+line+` ${width},${h}`;
+  return `<svg width="${width}" height="${h}" style="display:block;margin-top:14px">
+    <polygon fill="${color}22" stroke="none" points="${area}"/>
+    <polyline fill="none" stroke="${color}" stroke-width="1.5" points="${line}"/></svg>`;
+}
+function renderEquity(d,out){
+  if(!d.points.length) return out.innerHTML=`<div class="status">No equity data for this wallet.</div>`;
+  out.innerHTML=`<div class="cards">
+    <div class="mini"><div class="k">Span</div><div class="v">${d.spanDays} day${d.spanDays!==1?"s":""}</div></div>
+    <div class="mini"><div class="k">Final Equity</div><div class="v ${signCls(d.finalEquity)}">${fmtUsd(d.finalEquity)}</div></div>
+    <div class="mini"><div class="k">Peak</div><div class="v pos">${fmtUsd(d.peak)}</div></div>
+    <div class="mini"><div class="k">Trough</div><div class="v neg">${fmtUsd(d.trough)}</div></div>
+    <div class="mini"><div class="k">Events</div><div class="v">${d.points.length}</div></div></div>
+    <p style="color:var(--muted);font-size:13px;margin-top:8px">${d.note}</p>
+    ${sparkSvg(d.points,700,120,"var(--green)")}`;
+}
+function renderMtm(d,out){
+  if(!d.points.length) return out.innerHTML=`<div class="status">No account-value history for this wallet.</div>`;
+  const chgPct = d.startEquity ? ` (${(d.changePct*100).toFixed(1)}%)` : "";
+  out.innerHTML=`<div class="cards">
+    <div class="mini"><div class="k">Period</div><div class="v">${d.period}</div></div>
+    <div class="mini"><div class="k">Account Value</div><div class="v">${fmtUsdC(d.finalEquity)}</div></div>
+    <div class="mini"><div class="k">Change</div><div class="v ${signCls(d.change)}">${fmtUsd(d.change)}${chgPct}</div></div>
+    <div class="mini"><div class="k">Peak</div><div class="v pos">${fmtUsdC(d.peak)}</div></div>
+    <div class="mini"><div class="k">Trough</div><div class="v neg">${fmtUsdC(d.trough)}</div></div>
+    <div class="mini"><div class="k">Max DD</div><div class="v neg">${(d.drawdown.maxDrawdown*100).toFixed(2)}%</div></div>
+    <div class="mini"><div class="k">Span</div><div class="v">${d.spanDays} day${d.spanDays!==1?"s":""}</div></div>
+    <div class="mini"><div class="k">Points</div><div class="v">${d.points.length}</div></div></div>
+    <p style="color:var(--muted);font-size:13px;margin-top:8px">${d.note}</p>
+    ${sparkSvg(d.points,700,120,"var(--green)")}`;
+}
+function renderDrawdown(d,out){
+  if(!d.underwater.length) return out.innerHTML=`<div class="status">No drawdown data for this wallet.</div>`;
+  const ddPct=d.maxDrawdown*100;
+  const ddHrs=Math.round(d.maxDurationMs/3600000);
+  const curPct=d.currentDrawdown*100;
+  out.innerHTML=`<div class="cards">
+    <div class="mini"><div class="k">Max Drawdown</div><div class="v neg">${ddPct.toFixed(2)}%</div></div>
+    <div class="mini"><div class="k">Avg Drawdown</div><div class="v neg">${(d.avgDrawdown*100).toFixed(2)}%</div></div>
+    <div class="mini"><div class="k">Max Duration</div><div class="v">${ddHrs>48?Math.round(ddHrs/24)+"d "+ddHrs%24+"h":ddHrs+"h"}</div></div>
+    <div class="mini"><div class="k">Current DD</div><div class="v ${signCls(d.currentDrawdown)}">${curPct.toFixed(2)}%</div></div>
+    <div class="mini"><div class="k">Span</div><div class="v">${d.spanDays} day${d.spanDays!==1?"s":""}</div></div></div>
+    ${ddSvg(d.underwater,700,120,"var(--red)")}`;
+}
+function renderTearsheet(d,out){
+  // summary cards from metrics
+  const m=d.metrics, e=d.exposure, eq=d.equityCurve, dd=d.drawdown;
+  const r=m.ratios, w=m.winLoss, p=m.pnl, s=m.sample;
+  const biasPct=(e.netBias*100).toFixed(1);
+  const biasLabel=e.netBias>0.05?"LONG":e.netBias<-0.05?"SHORT":"NEUTRAL";
+  let html=`<div class="cards">
+    <div class="mini"><div class="k">Sharpe</div><div class="v">${fmtRatio(r.sharpe)}</div></div>
+    <div class="mini"><div class="k">Sortino</div><div class="v">${fmtRatio(r.sortino)}</div></div>
+    <div class="mini"><div class="k">Calmar</div><div class="v">${fmtRatio(r.calmar)}</div></div>
+    <div class="mini"><div class="k">Profit Factor</div><div class="v ${r.profitFactor==null?'pos':signCls(r.profitFactor-1)}">${r.profitFactor==null?'∞':r.profitFactor.toFixed(2)}</div></div>
+    <div class="mini"><div class="k">Expectancy</div><div class="v ${signCls(r.expectancy)}">${fmtUsd(r.expectancy)}</div></div>
+    <div class="mini"><div class="k">Max DD</div><div class="v neg">${pct(m.maxDrawdown)}</div></div>
+    <div class="mini"><div class="k">Win Rate</div><div class="v">${pct(w.winRate)}</div></div>
+    <div class="mini"><div class="k">Net PnL</div><div class="v ${signCls(p.net)}">${fmtUsd(p.net)}</div></div></div>`;
+  // exposure summary
+  html+=`<h4 style="margin-top:18px">Exposure</h4><div class="cards">
+    <div class="mini"><div class="k">Positions</div><div class="v">${e.positionCount}</div></div>
+    <div class="mini"><div class="k">Gross</div><div class="v">${fmtUsdC(e.grossExposure)}</div></div>
+    <div class="mini"><div class="k">Net Bias</div><div class="v">${biasLabel} ${biasPct}%</div></div>
+    <div class="mini"><div class="k">Max Lev</div><div class="v">${e.maxLeverage}×</div></div>
+    <div class="mini"><div class="k">uPnL</div><div class="v ${signCls(e.totalUnrealizedPnl)}">${fmtUsd(e.totalUnrealizedPnl)}</div></div></div>`;
+  // equity chart
+  if(eq.points&&eq.points.length){
+    html+=`<h4 style="margin-top:18px">Equity Curve (${eq.spanDays}d)</h4>
+      ${sparkSvg(eq.points,700,120,"var(--green)")}`;
+  }
+  // drawdown chart
+  if(dd.underwater&&dd.underwater.length){
+    html+=`<h4 style="margin-top:18px">Drawdown (${ddPct(dd.maxDrawdown)})</h4>
+      ${ddSvg(dd.underwater,700,100,"var(--red)")}`;
+  }
+  // monthly heatmap (compact)
+  if(m.monthly.length){
+    html+=`<h4 style="margin-top:18px">Monthly PnL</h4><div class="cards" style="flex-wrap:wrap">`;
+    for(const mth of m.monthly){
+      html+=`<div class="mini" style="min-width:100px"><div class="k">${mth.month}</div><div class="v ${signCls(mth.pnl)}">${fmtUsd(mth.pnl)}</div></div>`;
+    }
+    html+=`</div>`;
+  }
+  // top coins
+  if(m.concentration.byCoin.length){
+    html+=`<h4 style="margin-top:18px">PnL by Coin</h4><div class="tbl-wrap"><table><thead><tr><th>Coin</th><th>Fills</th><th>PnL</th><th>Share</th></tr></thead><tbody>`;
+    for(const c of m.concentration.byCoin.slice(0,8)){
+      html+=`<tr><td class="name-sans">${c.coin}</td><td>${c.fills}</td><td class="${signCls(c.realizedPnl)}">${fmtUsd(c.realizedPnl)}</td><td>${(c.share*100).toFixed(1)}%</td></tr>`;
+    }
+    html+=`</tbody></table></div>`;
+  }
+  out.innerHTML=html;
+  function ddPct(v){return (v*100).toFixed(2)+"%";}
+}
+function renderPerformance(a,out){ out.innerHTML=`<div class="ai-panel"><div class="ai-bar">✦ AI performance read</div><div class="ai-body">
+  <div class="verdict-row"><span class="badge-lvl lvl-${a.edgeStatus==='real'?'low':a.edgeStatus==='fading'?'moderate':'high'}">Edge: ${a.edgeStatus.toUpperCase()}</span>
+  <span class="badge-lvl" style="background:var(--surface2);color:var(--muted)">Risk: ${a.riskFlag}</span></div>
+  <p class="ai-sum">${a.summary}</p>
+  <div class="cards" style="margin-top:12px"><div class="mini"><div class="k">Primary driver</div><div class="v">${a.primaryDriver}</div></div></div>
+  <div class="siglist">${(a.signals||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div></div>`; }
+
+/* build the catalog of service cards */
+$("#catGrid").innerHTML = order.map(id=>{ const s=SERVICES[id];
+  return `<a class="svc-card" data-id="${id}" data-search="${(s.name+" "+s.desc).toLowerCase()}" href="/app?s=${id}">
+    <div class="svc-meta">${s.meta.join("")}</div>
+    <div class="svc-name">${s.name}</div>
+    <div class="svc-desc">${s.desc}</div>
+    <div class="try">Try this <span class="arr">→</span></div></a>`;
 }).join("");
 
-/* select a service */
+/* render one service into the workspace */
 function select(id){
-  if(!SERVICES[id]) id="positions";
   const s=SERVICES[id];
-  document.querySelectorAll(".side-item").forEach(e=>e.classList.toggle("active", e.dataset.id===id));
   $("#wTitle").textContent=s.title;
   $("#wMeta").innerHTML=s.meta.join("");
   $("#wLead").textContent=s.lead;
@@ -174,16 +543,63 @@ function select(id){
   const go=$("#go"); if(go) go.onclick=()=>s.run(out).catch(e=>err(out, (s.ai?"AI: ":"")+e.message));
   document.querySelectorAll("#wForm .chip").forEach(c=>c.onclick=()=>{ $("#in").value=c.dataset.val; });
   const inp=$("#in"); if(inp) inp.addEventListener("keydown",e=>{ if(e.key==="Enter") go.click(); });
-  history.replaceState(null,"",`/app?s=${id}`);
 }
-document.querySelectorAll(".side-item").forEach(e=>e.addEventListener("click",ev=>{ ev.preventDefault(); select(e.dataset.id); }));
+
+/* view switching */
+function showCatalog(){
+  $("#workspace").hidden=true; $("#catalog").hidden=false;
+  $("#crumb").textContent="/ APP";
+  $("#svcSearch").value="";
+  document.querySelectorAll("#catGrid .svc-card").forEach(c=>c.hidden=false);
+  $("#catEmpty").hidden=true;
+  window.scrollTo(0,0);
+}
+function showService(id){
+  $("#catalog").hidden=true; $("#workspace").hidden=false;
+  $("#crumb").textContent="/ "+SERVICES[id].name.toUpperCase();
+  select(id);
+  window.scrollTo(0,0);
+}
+function goToService(id){ history.pushState(null,"",`/app?s=${id}`); showService(id); }
+function goToCatalog(){ history.pushState(null,"","/app"); showCatalog(); }
+
+/* route from the URL (?s=…) and on back/forward */
+function route(){ const id=new URLSearchParams(location.search).get("s");
+  if(id && SERVICES[id]) showService(id); else showCatalog(); }
+
+/* wire navigation: cards, back link */
+document.querySelectorAll("#catGrid .svc-card").forEach(a=>a.addEventListener("click",e=>{ e.preventDefault(); goToService(a.dataset.id); }));
+$("#backCatalog").addEventListener("click",e=>{ e.preventDefault(); goToCatalog(); });
+window.addEventListener("popstate",route);
+
+/* search the catalog; press "/" anywhere to jump into it */
+const searchInput=$("#svcSearch");
+searchInput.addEventListener("input",()=>{
+  const q=searchInput.value.trim().toLowerCase();
+  let shown=0;
+  document.querySelectorAll("#catGrid .svc-card").forEach(c=>{
+    const hit = !q || c.dataset.search.includes(q);
+    c.hidden=!hit; if(hit) shown++;
+  });
+  $("#catEmpty").hidden = shown>0;
+});
+searchInput.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    const visible=[...document.querySelectorAll("#catGrid .svc-card")].filter(c=>!c.hidden);
+    if(visible.length) goToService(visible[0].dataset.id);
+  }
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="/" && !$("#catalog").hidden && !/^(input|select|textarea)$/i.test(document.activeElement.tagName)){
+    e.preventDefault(); searchInput.focus();
+  }
+});
 
 /* ai status + init */
 (async()=>{ try{ aiOn=(await call("/ai/status")).enabled; }catch(e){}
   const g=$("#aiGhost"); g.textContent= aiOn?"● AI online":"○ AI offline"; g.style.color= aiOn?"var(--green)":"var(--faint)";
 })();
-const params=new URLSearchParams(location.search);
-select(params.get("s")||"positions");
+route();
 </script>
 </body>
 </html>

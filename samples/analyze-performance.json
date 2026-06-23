@@ -1,0 +1,97 @@
+{
+  "version": "0.1.0",
+  "service": "analyze-performance",
+  "request": {
+    "wallet": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42"
+  },
+  "data": {
+    "wallet": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+    "performanceContext": {
+      "sample": {
+        "fills": 200,
+        "closingFills": 113,
+        "firstFillMs": 1780083039737,
+        "lastFillMs": 1782195678439,
+        "spanDays": 25
+      },
+      "pnl": {
+        "realized": 64881,
+        "fees": 49,
+        "net": 64832,
+        "bestDay": 22420.614542,
+        "worstDay": -0.399999
+      },
+      "ratios": {
+        "sharpe": 24.621007940292326,
+        "sortino": 1264148.7426294303,
+        "calmar": 1.3155974124949512e+75,
+        "profitFactor": null,
+        "expectancy": 574.1659453982302
+      },
+      "winLoss": {
+        "wins": 113,
+        "losses": 0,
+        "winRate": 1,
+        "avgWin": 574.1659453982302,
+        "avgLoss": 0
+      },
+      "concentration": {
+        "byCoin": [
+          {
+            "coin": "ONDO",
+            "realizedPnl": 34051,
+            "fills": 24,
+            "share": 0.5248244708572452
+          },
+          {
+            "coin": "HYPE",
+            "realizedPnl": 21603,
+            "fills": 154,
+            "share": 0.3329722097950603
+          },
+          {
+            "coin": "LAYER",
+            "realizedPnl": 9226,
+            "fills": 21,
+            "share": 0.1422033193476944
+          },
+          {
+            "coin": "WLD",
+            "realizedPnl": 0,
+            "fills": 1,
+            "share": 0
+          }
+        ],
+        "topCoin": "ONDO"
+      },
+      "maxDrawdown": -0.000013584836470312041,
+      "exposure": {
+        "grossExposure": 7023156,
+        "netExposure": 1505054,
+        "netBias": 0.21429881380963203,
+        "maxLeverage": 20,
+        "positionCount": 34
+      },
+      "curve": {
+        "source": "mark-to-market",
+        "spanDays": 293,
+        "finalEquity": 12514656,
+        "peak": 14435126,
+        "trough": 0
+      }
+    },
+    "analysis": {
+      "edgeStatus": "real",
+      "primaryDriver": "ONDO longs",
+      "riskFlag": "over-concentration in ONDO",
+      "summary": "The edge appears genuine, driven primarily by profitable long positions in ONDO, but the strategy's high concentration in this single coin poses a significant risk. The absence of losses and extremely high Sharpe and Sortino ratios suggest a potentially robust strategy, but these metrics should be viewed skeptically given the short sample period and high concentration. The high net exposure and max leverage also contribute to the risk profile.",
+      "signals": [
+        "extremely high Sharpe ratio",
+        "zero losses in sample",
+        "high concentration in ONDO",
+        "max leverage of 20",
+        "short sample period of 25 days"
+      ]
+    }
+  }
+}

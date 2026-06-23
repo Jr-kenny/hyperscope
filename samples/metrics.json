@@ -1,0 +1,105 @@
+{
+  "version": "0.1.0",
+  "service": "metrics",
+  "request": {
+    "wallet": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+    "limit": 200
+  },
+  "data": {
+    "sample": {
+      "fills": 200,
+      "closingFills": 113,
+      "firstFillMs": 1780083039737,
+      "lastFillMs": 1782195678439,
+      "spanDays": 25
+    },
+    "pnl": {
+      "realized": 64881,
+      "fees": 49,
+      "net": 64832,
+      "bestDay": 22420.614542,
+      "worstDay": -0.399999
+    },
+    "ratios": {
+      "sharpe": 24.621007940292326,
+      "sortino": 1264148.7426294303,
+      "calmar": 1.3155974124949512e+75,
+      "profitFactor": null,
+      "expectancy": 574.1659453982302
+    },
+    "winLoss": {
+      "wins": 113,
+      "losses": 0,
+      "winRate": 1,
+      "avgWin": 574.1659453982302,
+      "avgLoss": 0
+    },
+    "concentration": {
+      "byCoin": [
+        {
+          "coin": "ONDO",
+          "realizedPnl": 34051,
+          "fills": 24,
+          "share": 0.5248244708572452
+        },
+        {
+          "coin": "HYPE",
+          "realizedPnl": 21603,
+          "fills": 154,
+          "share": 0.3329722097950603
+        },
+        {
+          "coin": "LAYER",
+          "realizedPnl": 9226,
+          "fills": 21,
+          "share": 0.1422033193476944
+        },
+        {
+          "coin": "WLD",
+          "realizedPnl": 0,
+          "fills": 1,
+          "share": 0
+        }
+      ],
+      "topCoin": "ONDO"
+    },
+    "monthly": [
+      {
+        "month": "2026-05",
+        "pnl": 29445
+      },
+      {
+        "month": "2026-06",
+        "pnl": 35387
+      }
+    ],
+    "dailyCurve": [
+      {
+        "time": 1780012800000,
+        "equity": 7023.9062570000015
+      },
+      {
+        "time": 1780099200000,
+        "equity": 29444.520799
+      },
+      {
+        "time": 1780358400000,
+        "equity": 29444.1208
+      },
+      {
+        "time": 1780617600000,
+        "equity": 46466.582544000004
+      },
+      {
+        "time": 1780704000000,
+        "equity": 60209.695699
+      },
+      {
+        "time": 1782172800000,
+        "equity": 64831.530698
+      }
+    ],
+    "maxDrawdown": -0.000013584836470312041,
+    "note": "realized-PnL curve (closed PnL minus fees), not continuous mark-to-market"
+  }
+}

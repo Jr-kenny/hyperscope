@@ -5,7 +5,17 @@
 // Needs NVIDIA_API_KEY in the environment. Get a free key at build.nvidia.com.
 // Model is configurable via NVIDIA_MODEL; defaults to a solid free instruct model.
 
-import { getPositions, getVault, type Position } from "./hyperliquid.js";
+import {
+  getPositions,
+  getVault,
+  getWalletFills,
+  getNonFundingLedgerUpdates,
+  getFundingHistory,
+  getAccountValueHistory,
+  type Position,
+} from "./hyperliquid.js";
+import { positionsContext, fillsMetrics, exposureMetrics } from "./metrics.js";
+import { buildEquityCurve, buildMtmCurve } from "./equity.js";
 
 const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 const MODEL = process.env.NVIDIA_MODEL ?? "meta/llama-3.3-70b-instruct";
@@ -68,38 +78,6 @@ export interface PositionsAnalysis {
   netBias: "long" | "short" | "neutral";
   summary: string;
   signals: string[];
-}
-
-// Deterministic facts we compute ourselves and hand to the model, so its read is
-// grounded in real numbers rather than vibes.
-function positionsContext(positions: Position[]) {
-  let longNtl = 0;
-  let shortNtl = 0;
-  let totalUpnl = 0;
-  let maxLev = 0;
-  let nearestLiqPct: number | null = null;
-
-  for (const p of positions) {
-    if (p.side === "long") longNtl += p.positionValue;
-    else shortNtl += p.positionValue;
-    totalUpnl += p.unrealizedPnl;
-    maxLev = Math.max(maxLev, p.leverage.value);
-    if (p.liquidationPrice && p.entryPrice) {
-      const dist = Math.abs(p.entryPrice - p.liquidationPrice) / p.entryPrice;
-      nearestLiqPct =
-        nearestLiqPct === null ? dist : Math.min(nearestLiqPct, dist);
-    }
-  }
-
-  return {
-    positionCount: positions.length,
-    longNotional: Math.round(longNtl),
-    shortNotional: Math.round(shortNtl),
-    totalUnrealizedPnl: Math.round(totalUpnl),
-    maxLeverage: maxLev,
-    nearestLiquidationDistancePct:
-      nearestLiqPct === null ? null : Number((nearestLiqPct * 100).toFixed(1)),
-  };
 }
 
 export async function analyzePositions(
@@ -184,4 +162,87 @@ Return JSON exactly in this shape:
 
   const analysis = parseJson<VaultAnalysis>(await chat(system, user));
   return { vault, analysis };
+}
+
+// ---- performance read (strategy evaluation) -------------------------------
+
+export interface PerformanceAnalysis {
+  edgeStatus: "real" | "fading" | "absent";
+  primaryDriver: string; // what's actually producing the PnL
+  riskFlag: string; // the main way this strategy could blow up
+  summary: string;
+  signals: string[];
+}
+
+// The structural twin of analyzePositions/analyzeVault: gather grounded facts,
+// hand them to the model, get a structured judgment back. Here the facts are the
+// fills-based performance metrics + the live exposure + the realized curve.
+export async function analyzePerformance(
+  wallet: string
+): Promise<{
+  wallet: string;
+  performanceContext: unknown;
+  analysis: PerformanceAnalysis;
+}> {
+  // Pull all the raw streams in parallel, then compute deterministic metrics.
+  const [{ positions }, fillsResult, ledger, funding, mtmHistory] = await Promise.all([
+    getPositions(wallet),
+    getWalletFills(wallet, 200),
+    getNonFundingLedgerUpdates(wallet).catch(() => []),
+    getFundingHistory(wallet).catch(() => []),
+    getAccountValueHistory(wallet).catch(() => null),
+  ]);
+
+  const fmetrics = fillsMetrics(fillsResult.fills);
+  const exposure = exposureMetrics(positions);
+  // Prefer the continuous mark-to-market curve for the equity facts the model
+  // sees; fall back to the realized reconstruction when no history is available.
+  const mtm = mtmHistory && mtmHistory.points.length > 1 ? buildMtmCurve(mtmHistory) : null;
+  const curve = mtm ?? buildEquityCurve(fillsResult.fills, ledger, funding);
+
+  // Grounding facts: everything the model reasons about is precomputed so its
+  // read is anchored in real numbers, not inferred from raw fills.
+  const performanceContext = {
+    sample: fmetrics.sample,
+    pnl: fmetrics.pnl,
+    ratios: fmetrics.ratios,
+    winLoss: fmetrics.winLoss,
+    concentration: fmetrics.concentration,
+    maxDrawdown: fmetrics.maxDrawdown,
+    exposure: {
+      grossExposure: exposure.grossExposure,
+      netExposure: exposure.netExposure,
+      netBias: exposure.netBias,
+      maxLeverage: exposure.maxLeverage,
+      positionCount: exposure.positionCount,
+    },
+    curve: {
+      source: curve.method, // "mark-to-market" or "realized-reconstruction"
+      spanDays: curve.spanDays,
+      finalEquity: Math.round(curve.finalEquity),
+      peak: Math.round(curve.peak),
+      trough: Math.round(curve.trough),
+    },
+  };
+
+  const system =
+    "You are a performance analyst for an autonomous crypto trading agent. You read a wallet's track record (realized PnL, win/loss, risk ratios, exposure, drawdown) and judge whether the edge is real, fading, or absent — and what's driving it. Be direct and skeptical. Respond with ONLY a JSON object, no prose around it.";
+
+  const user = `Wallet performance on Hyperliquid:
+${JSON.stringify(performanceContext, null, 2)}
+
+Top coins by realized PnL:
+${JSON.stringify(fmetrics.concentration.byCoin.slice(0, 5), null, 2)}
+
+Return JSON exactly in this shape:
+{
+  "edgeStatus": "real | fading | absent",
+  "primaryDriver": "one short phrase: the coin, side, or condition producing most of the PnL",
+  "riskFlag": "one short phrase: the main way this strategy could blow up",
+  "summary": "2-3 sentences on whether the edge is genuine and what's behind it",
+  "signals": ["short bullet observations, e.g. profit factor, drawdown depth, concentration risk, sample size"]
+}`;
+
+  const analysis = parseJson<PerformanceAnalysis>(await chat(system, user));
+  return { wallet, performanceContext, analysis };
 }

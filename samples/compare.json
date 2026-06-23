@@ -1,0 +1,35 @@
+{
+  "version": "0.1.0",
+  "service": "compare",
+  "request": {
+    "vaults": [
+      "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+      "0xb0a55f13d22f66e6d495ac98113841b2326e9540"
+    ]
+  },
+  "data": {
+    "count": 2,
+    "vaults": [
+      {
+        "vaultAddress": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "name": "Hyperliquidity Provider (HLP)",
+        "apr": 0.0018676081639118231,
+        "followerCount": 100,
+        "leaderCommission": 0,
+        "tvl": 234461097.93591,
+        "isClosed": false,
+        "allowDeposits": true
+      },
+      {
+        "vaultAddress": "0xb0a55f13d22f66e6d495ac98113841b2326e9540",
+        "name": "HLP Liquidator 2",
+        "apr": 0,
+        "followerCount": 1,
+        "leaderCommission": 0,
+        "tvl": 29999900,
+        "isClosed": false,
+        "allowDeposits": true
+      }
+    ]
+  }
+}

@@ -61,8 +61,8 @@
   </div>
 
   <!-- SERVICES -->
-  <div class="sec" id="services"><span class="dash">—</span><h2>Services</h2><span class="n">(5)</span></div>
-  <p class="sec-lead">Five composable tools. Each one is a plain JSON endpoint and a one-click try in the app.</p>
+  <div class="sec" id="services"><span class="dash">—</span><h2>Services</h2><span class="n">(9)</span></div>
+  <p class="sec-lead">Nine composable tools. Each one is a plain JSON endpoint and a one-click try in the app, so an agent can read positions, market context, liquidity and track record, then ask the AI layer for a call.</p>
 
   <div class="svc-grid">
     <a class="svc-card" href="/app?s=positions">
@@ -93,6 +93,30 @@
       <div class="svc-meta"><span class="mbadge method">GET</span><span class="mbadge">cached</span></div>
       <div class="svc-name">Discover Vaults</div>
       <div class="svc-desc">A sortable shortlist across every live vault. Rank by TVL, APR or age, out of thousands.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card" href="/app?s=coin">
+      <div class="svc-meta"><span class="mbadge method">POST</span><span class="mbadge">SLA &lt; 2s</span></div>
+      <div class="svc-name">Coin Market &amp; Funding</div>
+      <div class="svc-desc">Mark, oracle and mid price, funding (hourly and annualized), open interest, 24h volume and change for any perp.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card" href="/app?s=book">
+      <div class="svc-meta"><span class="mbadge method">POST</span><span class="mbadge">SLA &lt; 2s</span></div>
+      <div class="svc-name">Order Book Depth</div>
+      <div class="svc-desc">Best bid and ask, mid, spread in bps and resting depth on each side, so an agent can size against real liquidity.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card" href="/app?s=fills">
+      <div class="svc-meta"><span class="mbadge method">POST</span><span class="mbadge">SLA &lt; 2s</span></div>
+      <div class="svc-name">Wallet Trade History</div>
+      <div class="svc-desc">A wallet's recent fills with realized PnL, win rate and volume: the track record, not just the current snapshot.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card" href="/app?s=compare">
+      <div class="svc-meta"><span class="mbadge method">POST</span><span class="mbadge">SLA &lt; 2s</span></div>
+      <div class="svc-name">Vault Compare</div>
+      <div class="svc-desc">Put several vaults side by side, ranked by APR, with followers, leader fee and size: a quick strategy shortlist.</div>
       <div class="try">Try this <span class="arr">→</span></div>
     </a>
     <a class="svc-card alt" href="/api" target="_blank">

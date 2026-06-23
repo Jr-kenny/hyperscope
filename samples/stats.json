@@ -1,0 +1,10 @@
+{
+  "version": "0.1.0",
+  "service": "stats",
+  "request": null,
+  "data": {
+    "totalVaults": 9461,
+    "openVaults": 3204,
+    "totalTvl": 390587391.6972476
+  }
+}

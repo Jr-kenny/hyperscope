@@ -1,0 +1,344 @@
+{
+  "version": "0.1.0",
+  "service": "exposure",
+  "request": {
+    "wallet": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42"
+  },
+  "data": {
+    "positionCount": 34,
+    "longNotional": 4262189,
+    "shortNotional": 2758323,
+    "totalUnrealizedPnl": 2921691,
+    "maxLeverage": 20,
+    "nearestLiquidationDistancePct": 3930.1,
+    "grossExposure": 7020512,
+    "netExposure": 1503866,
+    "netBias": 0.2142103026104079,
+    "byCoin": [
+      {
+        "coin": "HYPE",
+        "side": "long",
+        "notional": 4262189,
+        "unrealizedPnl": 224296,
+        "leverage": 10,
+        "share": 0.6071051547835827,
+        "liquidationDistancePct": null
+      },
+      {
+        "coin": "WLD",
+        "side": "short",
+        "notional": 211116,
+        "unrealizedPnl": -56116,
+        "leverage": 10,
+        "share": 0.030071370180266056,
+        "liquidationDistancePct": 7413
+      },
+      {
+        "coin": "TIA",
+        "side": "short",
+        "notional": 140919,
+        "unrealizedPnl": -919,
+        "leverage": 5,
+        "share": 0.02007245472523941,
+        "liquidationDistancePct": 8168
+      },
+      {
+        "coin": "GRASS",
+        "side": "short",
+        "notional": 137686,
+        "unrealizedPnl": -37686,
+        "leverage": 3,
+        "share": 0.019611895578271213,
+        "liquidationDistancePct": 10328.3
+      },
+      {
+        "coin": "AERO",
+        "side": "short",
+        "notional": 131235,
+        "unrealizedPnl": -11235,
+        "leverage": 3,
+        "share": 0.018693043578588,
+        "liquidationDistancePct": 8584.9
+      },
+      {
+        "coin": "ATOM",
+        "side": "short",
+        "notional": 107572,
+        "unrealizedPnl": 89428,
+        "leverage": 5,
+        "share": 0.015322561877538277,
+        "liquidationDistancePct": 5495
+      },
+      {
+        "coin": "ICP",
+        "side": "short",
+        "notional": 104740,
+        "unrealizedPnl": 30260,
+        "leverage": 5,
+        "share": 0.014919081981485111,
+        "liquidationDistancePct": 8062.2
+      },
+      {
+        "coin": "ASTER",
+        "side": "short",
+        "notional": 104050,
+        "unrealizedPnl": 50949,
+        "leverage": 3,
+        "share": 0.014820785201990967,
+        "liquidationDistancePct": 7008.7
+      },
+      {
+        "coin": "STABLE",
+        "side": "short",
+        "notional": 103596,
+        "unrealizedPnl": 16404,
+        "leverage": 3,
+        "share": 0.014756192023601698,
+        "liquidationDistancePct": 8562
+      },
+      {
+        "coin": "PYTH",
+        "side": "short",
+        "notional": 103339,
+        "unrealizedPnl": 135661,
+        "leverage": 5,
+        "share": 0.014719547745520556,
+        "liquidationDistancePct": 4509.9
+      },
+      {
+        "coin": "LAYER",
+        "side": "short",
+        "notional": 98310,
+        "unrealizedPnl": 159476,
+        "leverage": 3,
+        "share": 0.014003193523492304,
+        "liquidationDistancePct": 3930.1
+      },
+      {
+        "coin": "SEI",
+        "side": "short",
+        "notional": 95710,
+        "unrealizedPnl": 27166,
+        "leverage": 5,
+        "share": 0.013632846956176416,
+        "liquidationDistancePct": 8967.8
+      },
+      {
+        "coin": "CRV",
+        "side": "short",
+        "notional": 95189,
+        "unrealizedPnl": 119810,
+        "leverage": 10,
+        "share": 0.013558742522482691,
+        "liquidationDistancePct": 5262.4
+      },
+      {
+        "coin": "XRP",
+        "side": "short",
+        "notional": 86358,
+        "unrealizedPnl": 43642,
+        "leverage": 20,
+        "share": 0.012300759260863025,
+        "liquidationDistancePct": 8976.4
+      },
+      {
+        "coin": "AVNT",
+        "side": "short",
+        "notional": 83477,
+        "unrealizedPnl": 156521,
+        "leverage": 5,
+        "share": 0.01189040850581838,
+        "liquidationDistancePct": 4482.4
+      },
+      {
+        "coin": "STBL",
+        "side": "short",
+        "notional": 83429,
+        "unrealizedPnl": 36571,
+        "leverage": 3,
+        "share": 0.011883645364469146,
+        "liquidationDistancePct": 8545.1
+      },
+      {
+        "coin": "AVAX",
+        "side": "short",
+        "notional": 81610,
+        "unrealizedPnl": 123391,
+        "leverage": 10,
+        "share": 0.011624535647542514,
+        "liquidationDistancePct": 5517.4
+      },
+      {
+        "coin": "BLUR",
+        "side": "short",
+        "notional": 81190,
+        "unrealizedPnl": 141810,
+        "leverage": 3,
+        "share": 0.011564690031866621,
+        "liquidationDistancePct": 4551.1
+      },
+      {
+        "coin": "MERL",
+        "side": "short",
+        "notional": 79859,
+        "unrealizedPnl": 167279,
+        "leverage": 3,
+        "share": 0.011375147577555596,
+        "liquidationDistancePct": 4096.3
+      },
+      {
+        "coin": "SUI",
+        "side": "short",
+        "notional": 79434,
+        "unrealizedPnl": 90081,
+        "leverage": 10,
+        "share": 0.011314494517066563,
+        "liquidationDistancePct": 6692
+      },
+      {
+        "coin": "ZETA",
+        "side": "short",
+        "notional": 76485,
+        "unrealizedPnl": 136757,
+        "leverage": 3,
+        "share": 0.010894436109930444,
+        "liquidationDistancePct": 4761.7
+      },
+      {
+        "coin": "MINA",
+        "side": "short",
+        "notional": 76204,
+        "unrealizedPnl": 43796,
+        "leverage": 3,
+        "share": 0.010854448461593684,
+        "liquidationDistancePct": 8539
+      },
+      {
+        "coin": "IP",
+        "side": "short",
+        "notional": 75830,
+        "unrealizedPnl": 145169,
+        "leverage": 3,
+        "share": 0.010801270556050614,
+        "liquidationDistancePct": 4590.7
+      },
+      {
+        "coin": "APT",
+        "side": "short",
+        "notional": 71739,
+        "unrealizedPnl": 68261,
+        "leverage": 10,
+        "share": 0.010218546028551764,
+        "liquidationDistancePct": 8118.6
+      },
+      {
+        "coin": "ADA",
+        "side": "short",
+        "notional": 65575,
+        "unrealizedPnl": 152423,
+        "leverage": 10,
+        "share": 0.00934052711540127,
+        "liquidationDistancePct": 5175.1
+      },
+      {
+        "coin": "MORPHO",
+        "side": "short",
+        "notional": 60822,
+        "unrealizedPnl": -14299,
+        "leverage": 5,
+        "share": 0.00866351928463337,
+        "liquidationDistancePct": 23490.4
+      },
+      {
+        "coin": "BERA",
+        "side": "short",
+        "notional": 59761,
+        "unrealizedPnl": 205237,
+        "leverage": 5,
+        "share": 0.008512403082282318,
+        "liquidationDistancePct": 4041.2
+      },
+      {
+        "coin": "W",
+        "side": "short",
+        "notional": 56381,
+        "unrealizedPnl": 167179,
+        "leverage": 5,
+        "share": 0.008030825831506307,
+        "liquidationDistancePct": 4808.2
+      },
+      {
+        "coin": "ZORA",
+        "side": "short",
+        "notional": 52823,
+        "unrealizedPnl": 194178,
+        "leverage": 3,
+        "share": 0.007524049427306726,
+        "liquidationDistancePct": 4087.7
+      },
+      {
+        "coin": "ZRO",
+        "side": "short",
+        "notional": 52241,
+        "unrealizedPnl": 59759,
+        "leverage": 5,
+        "share": 0.007441169023284912,
+        "liquidationDistancePct": 9691.6
+      },
+      {
+        "coin": "XAI",
+        "side": "short",
+        "notional": 51579,
+        "unrealizedPnl": 100645,
+        "leverage": 3,
+        "share": 0.007346947019676058,
+        "liquidationDistancePct": 6694.7
+      },
+      {
+        "coin": "OP",
+        "side": "short",
+        "notional": 37252,
+        "unrealizedPnl": 146748,
+        "leverage": 5,
+        "share": 0.005306131596954752,
+        "liquidationDistancePct": 5925.1
+      },
+      {
+        "coin": "ONDO",
+        "side": "short",
+        "notional": 12547,
+        "unrealizedPnl": 9053,
+        "leverage": 10,
+        "share": 0.0017872476110004512,
+        "liquidationDistancePct": 51115.3
+      },
+      {
+        "coin": "NEAR",
+        "side": "short",
+        "notional": 266,
+        "unrealizedPnl": -3,
+        "leverage": 10,
+        "share": 0.000037906107132927054,
+        "liquidationDistancePct": 4352318.9
+      }
+    ],
+    "leverageBuckets": [
+      {
+        "leverage": 3,
+        "count": 13
+      },
+      {
+        "leverage": 5,
+        "count": 11
+      },
+      {
+        "leverage": 10,
+        "count": 9
+      },
+      {
+        "leverage": 20,
+        "count": 1
+      }
+    ]
+  }
+}

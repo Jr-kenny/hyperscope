@@ -1,0 +1,29 @@
+{
+  "version": "0.1.0",
+  "service": "analyze-positions",
+  "request": {
+    "wallet": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42"
+  },
+  "data": {
+    "wallet": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+    "positionsContext": {
+      "positionCount": 34,
+      "longNotional": 4262189,
+      "shortNotional": 2758275,
+      "totalUnrealizedPnl": 2921739,
+      "maxLeverage": 20,
+      "nearestLiquidationDistancePct": 3930.1
+    },
+    "analysis": {
+      "riskLevel": "high",
+      "netBias": "short",
+      "summary": "The wallet has a significant short bias with a large number of short positions, indicating a high risk of losses if the market moves against these positions. The high leverage used in some positions, such as the XRP short with 20x leverage, further amplifies this risk. The overall posture suggests a high level of speculation and potential for substantial losses.",
+      "signals": [
+        "High concentration of short positions (33 out of 34 positions) increases risk of correlated losses",
+        "Leverage as high as 20x in some positions (e.g., XRP short) significantly amplifies potential losses",
+        "Several positions have high unrealized profits, which may lead to overconfidence and poor risk management decisions",
+        "Nearest liquidation distance is over 39%, which is relatively far, but the high leverage and short bias still pose a significant risk"
+      ]
+    }
+  }
+}

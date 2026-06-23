@@ -1,0 +1,123 @@
+{
+  "version": "0.1.0",
+  "service": "book",
+  "request": {
+    "coin": "BTC",
+    "depth": 10
+  },
+  "data": {
+    "coin": "BTC",
+    "time": 1782249767635,
+    "bestBid": 62484,
+    "bestAsk": 62485,
+    "mid": 62484.5,
+    "spread": 1,
+    "spreadBps": 0.1600396898430811,
+    "bidDepthNotional": 1233038.0189899998,
+    "askDepthNotional": 2175998.2372600003,
+    "bids": [
+      {
+        "price": 62484,
+        "size": 1.69294,
+        "orders": 4
+      },
+      {
+        "price": 62483,
+        "size": 0.00083,
+        "orders": 3
+      },
+      {
+        "price": 62482,
+        "size": 0.00017,
+        "orders": 1
+      },
+      {
+        "price": 62481,
+        "size": 0.72799,
+        "orders": 6
+      },
+      {
+        "price": 62480,
+        "size": 0.90021,
+        "orders": 3
+      },
+      {
+        "price": 62479,
+        "size": 2.78902,
+        "orders": 7
+      },
+      {
+        "price": 62478,
+        "size": 1.906,
+        "orders": 7
+      },
+      {
+        "price": 62477,
+        "size": 3.85536,
+        "orders": 8
+      },
+      {
+        "price": 62476,
+        "size": 2.71291,
+        "orders": 5
+      },
+      {
+        "price": 62475,
+        "size": 5.15025,
+        "orders": 7
+      }
+    ],
+    "asks": [
+      {
+        "price": 62485,
+        "size": 10.62455,
+        "orders": 39
+      },
+      {
+        "price": 62486,
+        "size": 0.69188,
+        "orders": 7
+      },
+      {
+        "price": 62487,
+        "size": 3.64536,
+        "orders": 5
+      },
+      {
+        "price": 62488,
+        "size": 1.28872,
+        "orders": 9
+      },
+      {
+        "price": 62489,
+        "size": 4.49077,
+        "orders": 8
+      },
+      {
+        "price": 62490,
+        "size": 1.15004,
+        "orders": 7
+      },
+      {
+        "price": 62491,
+        "size": 4.14608,
+        "orders": 9
+      },
+      {
+        "price": 62492,
+        "size": 4.57971,
+        "orders": 9
+      },
+      {
+        "price": 62493,
+        "size": 2.8965,
+        "orders": 6
+      },
+      {
+        "price": 62494,
+        "size": 1.30868,
+        "orders": 7
+      }
+    ]
+  }
+}

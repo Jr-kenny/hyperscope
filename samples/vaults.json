@@ -1,1 +1,326 @@
-{"version":"0.1.0","service":"vaults","request":{"sort":"tvl","order":"desc","limit":3},"data":{"vaults":[{"vaultAddress":"0xdfc24b077bc1425ad1dea75bcb6f8158e10df303","name":"Hyperliquidity Provider (HLP)","leader":"0x677d831aef5328190852e24f13c46cac05f984e7","tvl":274691914.490446,"apr":0.002011417715515029,"status":"open","relationship":{"type":"parent","data":{"childAddresses":["0x010461c14e146ac35fe42271bdc1134ee31c703a","0x2e3d94f0562703b25c83308a05046ddaf9a8dd14","0x2ed5c4484ea3ff8b57d5f2fb152a40d9f2b68308","0x31ca8395cf837de08b24da3f660e77761dfb974b","0x469f690213c467c39a23efacfd2816896009d7d8","0x5e177e5e39c0f4e421f5865a6d8beed8d921cb70","0xb0a55f13d22f66e6d495ac98113841b2326e9540"]}},"createTimeMillis":1683243596849},{"vaultAddress":"0xb0a55f13d22f66e6d495ac98113841b2326e9540","name":"HLP Liquidator 2","leader":"0xdfc24b077bc1425ad1dea75bcb6f8158e10df303","tvl":30000000,"apr":0,"status":"open","relationship":{"type":"child"},"createTimeMillis":1745158533339},{"vaultAddress":"0xd6e56265890b76413d1d527eb9b75e334c0c5b42","name":"[ Systemic Strategies ] ♾️ HyperGrowth ♾️","leader":"0x2b804617c6f63c040377e95bb276811747006f4b","tvl":12725550.738011,"apr":0.7143946838792512,"status":"open","relationship":{"type":"normal"},"createTimeMillis":1756505842629}],"count":3,"total":9461}}
+{
+  "version": "0.1.0",
+  "service": "vaults",
+  "request": {
+    "sort": "tvl",
+    "order": "desc",
+    "limit": 25
+  },
+  "data": {
+    "vaults": [
+      {
+        "vaultAddress": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "name": "Hyperliquidity Provider (HLP)",
+        "leader": "0x677d831aef5328190852e24f13c46cac05f984e7",
+        "tvl": 274478405.453782,
+        "apr": 0.0019578248681153933,
+        "status": "open",
+        "relationship": {
+          "type": "parent",
+          "data": {
+            "childAddresses": [
+              "0x010461c14e146ac35fe42271bdc1134ee31c703a",
+              "0x2e3d94f0562703b25c83308a05046ddaf9a8dd14",
+              "0x2ed5c4484ea3ff8b57d5f2fb152a40d9f2b68308",
+              "0x31ca8395cf837de08b24da3f660e77761dfb974b",
+              "0x469f690213c467c39a23efacfd2816896009d7d8",
+              "0x5e177e5e39c0f4e421f5865a6d8beed8d921cb70",
+              "0xb0a55f13d22f66e6d495ac98113841b2326e9540"
+            ]
+          }
+        },
+        "createTimeMillis": 1683243596849
+      },
+      {
+        "vaultAddress": "0xb0a55f13d22f66e6d495ac98113841b2326e9540",
+        "name": "HLP Liquidator 2",
+        "leader": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "tvl": 30000000,
+        "apr": 0,
+        "status": "open",
+        "relationship": {
+          "type": "child"
+        },
+        "createTimeMillis": 1745158533339
+      },
+      {
+        "vaultAddress": "0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+        "name": "[ Systemic Strategies ] ♾️ HyperGrowth ♾️",
+        "leader": "0x2b804617c6f63c040377e95bb276811747006f4b",
+        "tvl": 12500504.490973,
+        "apr": 0.6583777478988335,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1756505842629
+      },
+      {
+        "vaultAddress": "0x1e37a337ed460039d1b15bd3bc489de789768d5e",
+        "name": "Growi HF",
+        "leader": "0x7789450871fb1315fa982ccb8039cb34e8f2f60d",
+        "tvl": 8510605.037357,
+        "apr": -0.03194630184443736,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1720440504732
+      },
+      {
+        "vaultAddress": "0x07fd993f0fa3a185f7207adccd29f7a87404689d",
+        "name": "[ Systemic Strategies ] L/S Grids",
+        "leader": "0x2b804617c6f63c040377e95bb276811747006f4b",
+        "tvl": 5131243.654931,
+        "apr": -0.030256403778175713,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1737611331869
+      },
+      {
+        "vaultAddress": "0xc179e03922afe8fa9533d3f896338b9fb87ce0c8",
+        "name": "drkmttr",
+        "leader": "0xf4f7cebbd2c7b6dee34ab29fa55a116eff25239f",
+        "tvl": 4594026.39889,
+        "apr": -0.3055123610413712,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1765303910503
+      },
+      {
+        "vaultAddress": "0x115849ce84370f25cadcf0d348510d73837e1aa5",
+        "name": "Orbit Value Strategies",
+        "leader": "0xf292b42e6167e0d591449ebd67d2e989a3479edf",
+        "tvl": 3122178.227159,
+        "apr": 0.14009900869751035,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1765765752661
+      },
+      {
+        "vaultAddress": "0x010461c14e146ac35fe42271bdc1134ee31c703a",
+        "name": "HLP Strategy A",
+        "leader": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "tvl": 3009688.679498,
+        "apr": -0.0005485935779725206,
+        "status": "open",
+        "relationship": {
+          "type": "child"
+        },
+        "createTimeMillis": 1683243598416
+      },
+      {
+        "vaultAddress": "0x31ca8395cf837de08b24da3f660e77761dfb974b",
+        "name": "HLP Strategy B",
+        "leader": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "tvl": 3001469.143719,
+        "apr": -0.0007753034711527031,
+        "status": "open",
+        "relationship": {
+          "type": "child"
+        },
+        "createTimeMillis": 1683243600725
+      },
+      {
+        "vaultAddress": "0xb1505ad1a4c7755e0eb236aa2f4327bfc3474768",
+        "name": "Bitcoin Moving Average Long/Short",
+        "leader": "0x1fa1b4c4cda61b3c1ce805ae82e64a90d8821d08",
+        "tvl": 2995244.309656,
+        "apr": 0.3839360270790253,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1759368120214
+      },
+      {
+        "vaultAddress": "0xac26cf5f3c46b5e102048c65b977d2551b72a9c7",
+        "name": "Long HYPE & BTC | Short Garbage",
+        "leader": "0xa380444a9299df2a15bddf949dd493bb6d30d939",
+        "tvl": 2551106.174321,
+        "apr": 1.5110289972005195,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1744227338023
+      },
+      {
+        "vaultAddress": "0x654016a8c9fcf0c4cb7ed6078aba21f7f399f7b7",
+        "name": "BredoStrategy",
+        "leader": "0xf5f569a7006860e6e17c92ba9d5959090acf0336",
+        "tvl": 2208125.961815,
+        "apr": -0.2849588551823219,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1771339341792
+      },
+      {
+        "vaultAddress": "0xa6a34f0bf2ccea9a1ddf9e9a973f17c498dc5e40",
+        "name": "FC Genesis - Quantum",
+        "leader": "0x3d32e286bb737ba348e28823863f02308768cfec",
+        "tvl": 2189679.093486,
+        "apr": -0.002108328402744166,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1757706873152
+      },
+      {
+        "vaultAddress": "0x27d33e77c8e6335089f56e399bf706ae9ad402b9",
+        "name": "Martyrbit",
+        "leader": "0x97ee7d16c1aebdfbfa7a9f983ac5a0ec56e63b2e",
+        "tvl": 1698442.613765,
+        "apr": 0.0836992486909634,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1736715289832
+      },
+      {
+        "vaultAddress": "0xca230e816bdb34a46960c2f978a30a563d1ae9e0",
+        "name": "Hyperrr",
+        "leader": "0x76184c92c5e17122a496fe1799adc77f4139c96e",
+        "tvl": 1638476.649801,
+        "apr": 1.726384126161057,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1734930727188
+      },
+      {
+        "vaultAddress": "0x8231fdf9997c003a267374b45fb25c0455aa1dcb",
+        "name": "AIQuantPulse",
+        "leader": "0xcbdf15e12fc3b8e8fc8bacf577c4d1071cf2b4b3",
+        "tvl": 1617455.984046,
+        "apr": 0.17195152880619444,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1770019526140
+      },
+      {
+        "vaultAddress": "0x45e7014f092c5f9c39482caec131346f13ac5e73",
+        "name": "Ultron",
+        "leader": "0x8d3f2ecf66c4752fcb6800d892beead654f6c056",
+        "tvl": 1260846.186099,
+        "apr": -0.16644141441531077,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1764780510678
+      },
+      {
+        "vaultAddress": "0x49a648936441b22f28f069d3c088928682b277ae",
+        "name": "Black Ops",
+        "leader": "0x970ed103da353023dc6726c04f183b38ce35943c",
+        "tvl": 1086376.540186,
+        "apr": -0.1145426374052652,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1767799704593
+      },
+      {
+        "vaultAddress": "0x7048b287889c5913d59f812795d7fd5d724be77a",
+        "name": "Equinox · Blackalgo",
+        "leader": "0x3db735d71673b3d57b34f55013b9b25e2d2dd9cf",
+        "tvl": 1075520.927588,
+        "apr": 1.305080307095761,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1768828472273
+      },
+      {
+        "vaultAddress": "0x469f690213c467c39a23efacfd2816896009d7d8",
+        "name": "HLP Strategy X",
+        "leader": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "tvl": 1005725.265915,
+        "apr": 0.014718276154073194,
+        "status": "open",
+        "relationship": {
+          "type": "child"
+        },
+        "createTimeMillis": 1766221022171
+      },
+      {
+        "vaultAddress": "0x2e3d94f0562703b25c83308a05046ddaf9a8dd14",
+        "name": "HLP Liquidator",
+        "leader": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "tvl": 1000000,
+        "apr": 0,
+        "status": "open",
+        "relationship": {
+          "type": "child"
+        },
+        "createTimeMillis": 1691611702083
+      },
+      {
+        "vaultAddress": "0x2ed5c4484ea3ff8b57d5f2fb152a40d9f2b68308",
+        "name": "HLP Liquidator 4",
+        "leader": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "tvl": 1000000,
+        "apr": 0,
+        "status": "open",
+        "relationship": {
+          "type": "child"
+        },
+        "createTimeMillis": 1763195061468
+      },
+      {
+        "vaultAddress": "0x5e177e5e39c0f4e421f5865a6d8beed8d921cb70",
+        "name": "HLP Liquidator 3",
+        "leader": "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303",
+        "tvl": 1000000,
+        "apr": -0.08312519893317949,
+        "status": "open",
+        "relationship": {
+          "type": "child"
+        },
+        "createTimeMillis": 1763195012608
+      },
+      {
+        "vaultAddress": "0x780825f3f0ad6799e304fb843387934c1fa06e70",
+        "name": "AILAB TEST ULTRA",
+        "leader": "0x4692441b5a9e26a690eea6d2f36139679add737b",
+        "tvl": 949180.006934,
+        "apr": 1.6768392414896789,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1766809482609
+      },
+      {
+        "vaultAddress": "0x1840bdb83caff17de910ec407cafb817678786b5",
+        "name": "Scott Phillips Trading Vault",
+        "leader": "0xea3695dbbacc903f0a3616d49a05dc9b829309f9",
+        "tvl": 877992.98469,
+        "apr": 0.4502002063086853,
+        "status": "open",
+        "relationship": {
+          "type": "normal"
+        },
+        "createTimeMillis": 1740572509362
+      }
+    ],
+    "count": 25,
+    "total": 9461
+  }
+}

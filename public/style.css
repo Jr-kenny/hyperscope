@@ -9,6 +9,7 @@
   --r:18px;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{margin:0;color:var(--ink);background:var(--bg);
   font-family:"Schibsted Grotesk",-apple-system,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -97,6 +98,25 @@ a:hover{text-decoration:underline}
 .why-card p{color:var(--muted);font-size:14px;margin:0;line-height:1.6}
 
 footer{margin:56px 0 46px;color:var(--faint);font-family:"JetBrains Mono";font-size:11.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* ===== app catalog (services list you land on) ===== */
+.catalog{margin-top:34px}
+.cat-head h2{font-size:26px;margin:0;letter-spacing:-.02em}
+.cat-head p{color:var(--muted);margin:8px 0 0;max-width:600px}
+.search{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line2);
+  border-radius:14px;padding:13px 16px;margin:22px 0 2px;box-shadow:var(--shadow);max-width:520px}
+.search:focus-within{border-color:var(--green)}
+.search-ico{color:var(--faint);font-size:17px;line-height:1}
+.search input{flex:1;min-width:0;border:0;background:transparent;padding:0;
+  font-family:"Schibsted Grotesk",-apple-system,sans-serif;font-size:15px;color:var(--ink)}
+.search input:focus{background:transparent}
+.search-kbd{font-family:"JetBrains Mono";font-size:12px;font-weight:600;color:var(--muted);background:var(--surface2);
+  border:1px solid var(--line2);border-bottom-width:2px;border-radius:6px;padding:2px 8px;line-height:1.4}
+.cat-empty{font-family:"JetBrains Mono";font-size:13px;color:var(--muted);padding:30px 2px}
+
+/* ===== single service page (only that one service, nothing else) ===== */
+.service{max-width:760px;margin:30px auto 0}
+.service .side-back{display:inline-flex}
 
 /* ===== app workspace ===== */
 .app{display:grid;grid-template-columns:264px 1fr;gap:26px;margin-top:30px;align-items:start}
