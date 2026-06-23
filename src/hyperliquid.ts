@@ -169,18 +169,20 @@ interface RawVaultSummary {
 
 export type VaultSortKey = "tvl" | "apr" | "createTimeMillis";
 
-export async function listVaults(opts: {
-  sort?: VaultSortKey;
-  order?: "asc" | "desc";
-  limit?: number;
-}): Promise<{ vaults: VaultListItem[]; count: number; total: number }> {
+// The vault listing is a single ~2.5MB payload covering every vault, and the
+// host can be slow. Cache the normalized list briefly so repeat calls (and the
+// UI's sort toggles) are instant instead of refetching megabytes each time.
+const VAULTS_TTL_MS = 60_000;
+let vaultsCache: { at: number; data: VaultListItem[] } | null = null;
+let vaultsInflight: Promise<VaultListItem[]> | null = null;
+
+async function refetchVaultList(): Promise<VaultListItem[]> {
   const res = await fetch(STATS_URL);
   if (!res.ok) {
     throw new Error(`hyperliquid vaults ${res.status}: ${await res.text()}`);
   }
   const raw = (await res.json()) as RawVaultSummary[];
-
-  let vaults: VaultListItem[] = raw.map((v) => ({
+  const data: VaultListItem[] = raw.map((v) => ({
     vaultAddress: v.summary.vaultAddress,
     name: v.summary.name,
     leader: v.summary.leader,
@@ -190,6 +192,47 @@ export async function listVaults(opts: {
     relationship: v.summary.relationship,
     createTimeMillis: v.summary.createTimeMillis,
   }));
+  vaultsCache = { at: Date.now(), data };
+  return data;
+}
+
+// Dedupe concurrent refreshes so a burst of requests triggers one upstream fetch.
+function refreshVaultList(): Promise<VaultListItem[]> {
+  if (!vaultsInflight) {
+    vaultsInflight = refetchVaultList().finally(() => {
+      vaultsInflight = null;
+    });
+  }
+  return vaultsInflight;
+}
+
+async function fetchVaultList(): Promise<VaultListItem[]> {
+  // Fresh cache: serve it.
+  if (vaultsCache && Date.now() - vaultsCache.at < VAULTS_TTL_MS) {
+    return vaultsCache.data;
+  }
+  // Stale cache: serve it now, refresh in the background (stale-while-revalidate).
+  if (vaultsCache) {
+    void refreshVaultList().catch(() => {});
+    return vaultsCache.data;
+  }
+  // Cold start, nothing cached yet: we have to wait for the first fetch.
+  return refreshVaultList();
+}
+
+// Kick off the first fetch at boot so the endpoint is warm before anyone calls it.
+export function warmVaultCache(): void {
+  void refreshVaultList().catch(() => {});
+}
+
+export async function listVaults(opts: {
+  sort?: VaultSortKey;
+  order?: "asc" | "desc";
+  limit?: number;
+}): Promise<{ vaults: VaultListItem[]; count: number; total: number }> {
+  const all = await fetchVaultList();
+  // copy before sorting so we never mutate the cached array's order
+  let vaults: VaultListItem[] = [...all];
 
   const total = vaults.length;
   const sort = opts.sort ?? "tvl";
@@ -202,4 +245,17 @@ export async function listVaults(opts: {
   vaults = vaults.slice(0, limit);
 
   return { vaults, count: vaults.length, total };
+}
+
+export async function vaultStats(): Promise<{
+  totalVaults: number;
+  openVaults: number;
+  totalTvl: number;
+}> {
+  const all = await fetchVaultList();
+  return {
+    totalVaults: all.length,
+    openVaults: all.filter((v) => v.status === "open").length,
+    totalTvl: all.reduce((s, v) => s + v.tvl, 0),
+  };
 }

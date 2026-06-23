@@ -1,8 +1,10 @@
 # HyperScope
 
-Read-only Hyperliquid data tools for trading agents. Give it a wallet and it tells you the open perp positions. Give it a vault address and it tells you everything about that vault. Ask it for vaults and it hands back a sorted shortlist out of the ~9,400 live ones.
+Read-only Hyperliquid perception tools for trading agents. Give it a wallet and it tells you the open perp positions. Give it a vault address and it tells you everything about that vault. Ask it for vaults and it hands back a sorted shortlist out of the ~9,400 live ones. Then it puts an AI read on top: a grounded risk assessment of a wallet's positions, and a follow / watch / avoid verdict on a vault.
 
-Built for the Bitget AI Base Camp Hackathon S1, Trading Infra track. The idea is simple: an autonomous trading agent needs to perceive the market before it acts, and a lot of that perception is just "what is this wallet holding" and "is this vault worth following". HyperScope turns those three questions into clean JSON an agent can consume directly, with no API keys and no setup, because everything underneath is Hyperliquid's public info endpoint.
+Built for the Bitget AI Base Camp Hackathon S1, Trading Infra track. The idea is simple: an autonomous trading agent needs to perceive the market before it acts, and a lot of that perception is just "what is this wallet holding" and "is this vault worth following". The raw data is the easy half. The harder half is judgment, so HyperScope also asks a model to turn the numbers into something an agent can act on. The data tools need no keys at all; the AI layer uses NVIDIA's free NIM API.
+
+There's also a browser UI at the root path (`/`) that drives all of this, so you can see it working without writing any client code.
 
 ## Why this exists
 
@@ -38,6 +40,26 @@ GET /vaults?sort=tvl&order=desc&limit=50
 
 A sortable shortlist of vaults: address, name, leader, TVL, APR, status, relationship type, and creation time. Sort by `tvl`, `apr`, or `createTimeMillis`, order `asc` or `desc`, limit 1 to 500. `data.total` tells you how many vaults exist in total.
 
+### 4. AI risk read (positions)
+
+```
+POST /analyze/positions
+{ "wallet": "0x..." }
+```
+
+Fetches the wallet's positions, computes grounded facts (net long vs short notional, total unrealized PnL, max leverage, nearest liquidation distance), hands them to the model, and returns a structured read: `riskLevel`, `netBias`, a short `summary`, and a list of `signals`.
+
+### 5. AI vault verdict
+
+```
+POST /analyze/vault
+{ "vault": "0x..." }
+```
+
+Reviews the vault and returns a `verdict` (follow / watch / avoid), a `score` out of 100, a `summary`, and `pros` / `cons`. The model is told to be skeptical of unsustainable APRs.
+
+Both AI endpoints need `NVIDIA_API_KEY` set (see below). Without it they return `error: ai_not_configured` and `GET /ai/status` reports `{ enabled: false }`, so the UI degrades gracefully.
+
 ## Run it
 
 Needs Node 18 or newer.
@@ -53,6 +75,20 @@ Or in watch mode while developing:
 ```bash
 npm run dev
 ```
+
+Then open `http://localhost:3000` for the UI, or hit the endpoints directly.
+
+### Turning on the AI layer
+
+The two `/analyze/*` endpoints need an NVIDIA NIM key. Get one free at [build.nvidia.com](https://build.nvidia.com), then:
+
+```bash
+export NVIDIA_API_KEY="nvapi-..."
+# optional, defaults to meta/llama-3.3-70b-instruct
+export NVIDIA_MODEL="meta/llama-3.3-70b-instruct"
+```
+
+The data tools (positions, vault, vaults) work with or without it.
 
 Quick check once it's up:
 

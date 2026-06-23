@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HyperScope — Hyperliquid perception tools for trading agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23073b34'/><text x='50' y='72' font-size='64' font-family='monospace' font-weight='700' fill='%2316e0be' text-anchor='middle'>H</text></svg>">
+<style>
+  :root{
+    --bg:#e9ece3; --grain:#e3e7dc;
+    --surface:#ffffff; --surface2:#f5f7f0;
+    --ink:#0a0f0c; --muted:#5e655d; --faint:#969d92;
+    --line:#e0e3d9; --line2:#d3d7cb;
+    --accent:#06987f; --accent-ink:#053f36; --mint:#15ddbb; --mint-soft:#d4f7ef;
+    --long:#0e9d63; --short:#d43f33;
+    --shadow:0 1px 2px rgba(12,20,15,.04), 0 8px 24px -12px rgba(12,20,15,.12);
+    --shadow-lg:0 1px 2px rgba(12,20,15,.05), 0 24px 48px -20px rgba(12,20,15,.22);
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); background:var(--bg);
+    background-image:radial-gradient(var(--line2) 0.8px, transparent 0.8px);
+    background-size:22px 22px;
+    font-family:"Schibsted Grotesk",-apple-system,sans-serif;
+    font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"JetBrains Mono",monospace}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* top bar */
+  .top{position:sticky;top:0;z-index:30;backdrop-filter:blur(10px);
+    background:rgba(233,236,227,.78);border-bottom:1px solid var(--line)}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:17px}
+  .mark{width:30px;height:30px;border-radius:9px;background:var(--accent-ink);
+    display:grid;place-items:center;color:var(--mint);font-family:"JetBrains Mono";font-weight:700;font-size:17px}
+  .top-right{display:flex;align-items:center;gap:14px;font-size:13.5px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono";font-size:11px;
+    font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:20px;border:1px solid var(--line2)}
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 3px var(--mint-soft)}
+  .pill.ai-off .dot{background:var(--faint);box-shadow:0 0 0 3px var(--line)}
+  .top-right a{color:var(--muted);font-weight:500}
+
+  /* hero */
+  .hero{margin-top:34px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+  .identity{padding:30px 32px}
+  .identity .badges{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .tag{font-family:"JetBrains Mono";font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+    padding:5px 11px;border-radius:7px;background:var(--surface2);color:var(--muted);border:1px solid var(--line)}
+  .tag.live{background:var(--mint-soft);color:var(--accent-ink);border-color:transparent}
+  h1{font-size:34px;line-height:1.1;letter-spacing:-.03em;margin:0 0 6px;font-weight:800}
+  .hero .sub{color:var(--muted);font-size:16px;max-width:680px;margin:0 0 18px}
+  .hero .links{display:flex;gap:18px;font-family:"JetBrains Mono";font-size:13px;flex-wrap:wrap}
+  .hero .links span{color:var(--faint)}
+
+  /* stat tiles */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+  .stat .k{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .stat .v{font-family:"JetBrains Mono";font-size:25px;font-weight:700;margin-top:8px;letter-spacing:-.02em}
+  .stat .v.accent{color:var(--accent)}
+
+  /* section heading */
+  .shead{display:flex;align-items:center;gap:10px;margin:42px 0 16px}
+  .shead .ln{height:1px;background:var(--line2);flex:1}
+  .shead h2{font-family:"JetBrains Mono";font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+
+  /* tabs */
+  .tabs{display:inline-flex;gap:4px;background:var(--surface);padding:5px;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .tab{appearance:none;border:0;background:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;
+    color:var(--muted);padding:9px 18px;border-radius:8px}
+  .tab.active{background:var(--accent-ink);color:#fff}
+  .tab:not(.active):hover{color:var(--ink)}
+
+  .panel{margin-top:18px;padding:26px;display:none}
+  .panel.active{display:block;animation:fade .4s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .lead{color:var(--muted);margin:0 0 18px;max-width:680px}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  input,select{font-family:"JetBrains Mono";font-size:13.5px;color:var(--ink);background:var(--surface2);
+    border:1px solid var(--line2);border-radius:10px;padding:12px 14px;outline:none}
+  input{flex:1;min-width:280px}
+  input:focus,select:focus{border-color:var(--accent);background:#fff}
+  select{font-family:inherit;font-size:13.5px;cursor:pointer}
+  .btn{appearance:none;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;
+    background:var(--accent-ink);color:#fff;padding:12px 22px;border-radius:10px;transition:transform .08s,background .15s}
+  .btn:hover{background:#06241f}
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.45;cursor:default}
+  .btn.ai{background:var(--mint);color:var(--accent-ink);display:inline-flex;align-items:center;gap:7px}
+  .btn.ai:hover{background:#0fd0ad}
+  .chip{cursor:pointer;font-family:"JetBrains Mono";font-size:11.5px;color:var(--muted);
+    background:var(--surface2);border:1px dashed var(--line2);padding:5px 11px;border-radius:20px}
+  .chip:hover{border-style:solid;color:var(--accent)}
+
+  .status{font-family:"JetBrains Mono";font-size:12.5px;color:var(--muted);padding:14px 2px}
+  .status.err{color:var(--short)}
+  .out{margin-top:22px}
+
+  /* tables */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-family:"JetBrains Mono";font-size:12.5px;font-variant-numeric:tabular-nums}
+  th{text-align:right;font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);
+    padding:12px 14px;background:var(--surface2);border-bottom:1px solid var(--line);white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  td{padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover td{background:var(--surface2)}
+  .long{color:var(--long);font-weight:600}.short{color:var(--short);font-weight:600}
+  .pos{color:var(--long)}.neg{color:var(--short)}
+  .name-sans{font-family:"Schibsted Grotesk";font-weight:600}
+  td a{color:var(--accent)}
+
+  /* vault cards */
+  .vault-head h3{font-size:22px;margin:0 0 4px;letter-spacing:-.02em}
+  .vault-head .desc{color:var(--muted);max-width:720px;margin:0 0 20px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .mini{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+  .mini .k{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+  .mini .v{font-family:"JetBrains Mono";font-size:18px;font-weight:700;margin-top:6px}
+  .meta{font-family:"JetBrains Mono";font-size:11.5px;color:var(--faint);margin-top:16px}
+
+  /* AI verdict */
+  .ai-panel{margin-top:22px;border:1px solid var(--line2);border-radius:14px;overflow:hidden}
+  .ai-bar{display:flex;align-items:center;gap:9px;padding:12px 18px;background:linear-gradient(90deg,var(--mint-soft),transparent);
+    border-bottom:1px solid var(--line);font-family:"JetBrains Mono";font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+  .ai-bar .spark{color:var(--accent)}
+  .ai-body{padding:20px}
+  .verdict-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .badge-lvl{font-family:"JetBrains Mono";font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:7px 14px;border-radius:8px}
+  .lvl-low,.v-follow{background:#dff5e9;color:#0c7a48}
+  .lvl-moderate,.v-watch{background:#fef0d6;color:#9a6a06}
+  .lvl-high{background:#fbe2da;color:#b8482f}
+  .lvl-extreme,.v-avoid{background:#fbdad4;color:#b3261a}
+  .score{font-family:"JetBrains Mono";font-weight:700;font-size:15px}
+  .ai-sum{margin:0 0 14px;line-height:1.6}
+  .siglist{display:flex;flex-direction:column;gap:8px}
+  .sig{display:flex;gap:9px;font-size:13.5px;color:var(--muted)}
+  .sig::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mint);margin-top:7px;flex:none}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .twocol h4{font-family:"JetBrains Mono";font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 9px;color:var(--faint)}
+  .ai-note{font-size:13px;color:var(--muted);background:var(--surface2);border:1px dashed var(--line2);border-radius:10px;padding:13px 15px}
+
+  footer{margin:60px 0 50px;color:var(--faint);font-family:"JetBrains Mono";font-size:12px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+  @media(max-width:720px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .twocol{grid-template-columns:1fr}
+    h1{font-size:27px}
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="mark">H</span>HyperScope</div>
+    <div class="top-right">
+      <span class="pill" id="aiPill"><span class="dot"></span><span id="aiPillTxt">AI checking…</span></span>
+      <a href="https://github.com/Jr-kenny/hyperscope" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- IDENTITY -->
+  <div class="hero">
+    <div class="card identity">
+      <div class="badges">
+        <span class="tag live">● Live</span>
+        <span class="tag">Trading Infra</span>
+        <span class="tag">Hyperliquid</span>
+        <span class="tag">Read-only · no auth</span>
+      </div>
+      <h1>Perception tools for trading agents</h1>
+      <p class="sub">HyperScope turns Hyperliquid's raw on-chain data into clean, normalized signals an autonomous agent can act on, then layers an AI read on top: position risk, vault verdicts, and discovery across every live vault.</p>
+      <div class="links">
+        <span>API</span> <a href="/api" target="_blank">5 JSON endpoints</a>
+        &nbsp;·&nbsp; <span>AI</span> NVIDIA NIM
+        &nbsp;·&nbsp; <span>Source</span> <a href="https://github.com/Jr-kenny/hyperscope" target="_blank">github.com/Jr-kenny/hyperscope</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats" id="stats">
+    <div class="stat"><div class="k">Vaults indexed</div><div class="v mono" id="stVaults">—</div></div>
+    <div class="stat"><div class="k">Total TVL tracked</div><div class="v mono accent" id="stTvl">—</div></div>
+    <div class="stat"><div class="k">Open vaults</div><div class="v mono" id="stOpen">—</div></div>
+    <div class="stat"><div class="k">API auth</div><div class="v mono">None</div></div>
+  </div>
+
+  <!-- TOOLS -->
+  <div class="shead"><h2>Tools</h2><div class="ln"></div></div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="positions">Wallet positions</button>
+    <button class="tab" data-tab="vault">Vault review</button>
+    <button class="tab" data-tab="vaults">Discover vaults</button>
+  </div>
+
+  <!-- POSITIONS -->
+  <section class="card panel active" id="tab-positions">
+    <p class="lead">Open perpetual positions for any wallet, fully normalized. Then ask the model for a grounded risk read.</p>
+    <div class="row">
+      <input id="walletIn" class="mono" placeholder="0x… wallet address" spellcheck="false" />
+      <button class="btn" id="walletBtn">Look up</button>
+      <button class="btn ai" id="walletAi" disabled><span>✦</span> Analyze with AI</button>
+    </div>
+    <div class="row" style="margin-top:11px">
+      <span class="chip" data-fill="walletIn" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span>
+    </div>
+    <div class="out" id="walletOut"></div>
+  </section>
+
+  <!-- VAULT -->
+  <section class="card panel" id="tab-vault">
+    <p class="lead">Full review of a single vault, then an AI follow / watch / avoid verdict with reasoning.</p>
+    <div class="row">
+      <input id="vaultIn" class="mono" placeholder="0x… vault address" spellcheck="false" />
+      <button class="btn" id="vaultBtn">Review</button>
+      <button class="btn ai" id="vaultAi" disabled><span>✦</span> Get AI verdict</button>
+    </div>
+    <div class="row" style="margin-top:11px">
+      <span class="chip" data-fill="vaultIn" data-val="0xdfc24b077bc1425ad1dea75bcb6f8158e10df303">try: HLP vault</span>
+    </div>
+    <div class="out" id="vaultOut"></div>
+  </section>
+
+  <!-- VAULTS -->
+  <section class="card panel" id="tab-vaults">
+    <p class="lead">Discover across the live vaults. Sort by TVL, APR or age.</p>
+    <div class="row">
+      <select id="sortIn">
+        <option value="tvl">Sort by TVL</option>
+        <option value="apr">Sort by APR</option>
+        <option value="createTimeMillis">Sort by newest</option>
+      </select>
+      <select id="orderIn">
+        <option value="desc">High to low</option>
+        <option value="asc">Low to high</option>
+      </select>
+      <select id="limitIn">
+        <option value="10">Top 10</option>
+        <option value="25" selected>Top 25</option>
+        <option value="50">Top 50</option>
+      </select>
+      <button class="btn" id="vaultsBtn">Load</button>
+    </div>
+    <div class="out" id="vaultsOut"></div>
+  </section>
+
+  <footer>
+    <span>HyperScope · read-only Hyperliquid perception layer</span>
+    <span>Built for Bitget AI Hackathon S1 · Trading Infra</span>
+  </footer>
+
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const fmtUsd = n => "$" + Number(n).toLocaleString(undefined,{maximumFractionDigits:2});
+const fmtUsdC = n => { n=Number(n); if(n>=1e9)return "$"+(n/1e9).toFixed(2)+"B"; if(n>=1e6)return "$"+(n/1e6).toFixed(2)+"M"; if(n>=1e3)return "$"+(n/1e3).toFixed(1)+"K"; return "$"+n.toFixed(0); };
+const fmtNum = n => Number(n).toLocaleString(undefined,{maximumFractionDigits:4});
+const pct = n => (Number(n)*100).toFixed(2)+"%";
+const short = a => a.slice(0,6)+"…"+a.slice(-4);
+const hlLink = a => `https://app.hyperliquid.xyz/explorer/address/${a}`;
+const signCls = n => Number(n)>=0?"pos":"neg";
+let lastWallet="", lastVault="";
+
+async function call(path, opts){
+  const r = await fetch(path, opts);
+  const j = await r.json();
+  if(j.error) throw new Error(j.error);
+  return j.data;
+}
+
+/* tabs */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    ["positions","vault","vaults"].forEach(id=>{
+      $("#tab-"+id).classList.toggle("active", id===t.dataset.tab);
+    });
+  };
+});
+document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ $("#"+c.dataset.fill).value=c.dataset.val; });
+
+/* stats */
+(async()=>{
+  try{
+    const s = await call("/stats");
+    $("#stVaults").textContent = s.totalVaults.toLocaleString();
+    $("#stTvl").textContent = fmtUsdC(s.totalTvl);
+    $("#stOpen").textContent = s.openVaults.toLocaleString();
+  }catch(e){}
+})();
+
+/* ai status */
+let aiOn=false;
+(async()=>{
+  try{
+    const d = await call("/ai/status");
+    aiOn = d.enabled;
+  }catch(e){ aiOn=false; }
+  const pill=$("#aiPill"), txt=$("#aiPillTxt");
+  if(aiOn){ txt.textContent="AI online"; }
+  else{ pill.classList.add("ai-off"); txt.textContent="AI offline"; }
+})();
+
+function aiNote(){
+  return `<div class="ai-panel"><div class="ai-bar"><span class="spark">✦</span> AI analysis</div>
+    <div class="ai-body"><div class="ai-note">AI is offline on this instance. Set <span class="mono">NVIDIA_API_KEY</span> (free at build.nvidia.com) to enable position risk reads and vault verdicts.</div></div></div>`;
+}
+
+/* 1. positions */
+async function loadPositions(){
+  const w = $("#walletIn").value.trim();
+  const out=$("#walletOut");
+  if(!w){ out.innerHTML=`<div class="status err">Enter a wallet address.</div>`; return; }
+  lastWallet=w; $("#walletAi").disabled=false;
+  out.innerHTML=`<div class="status">Loading positions…</div>`;
+  try{
+    const d = await call("/positions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({wallet:w})});
+    if(!d.count){ out.innerHTML=`<div class="status">No open positions for this wallet.</div>`; return; }
+    const rows=d.positions.map(p=>`<tr>
+      <td class="name-sans">${p.coin}</td>
+      <td class="${p.side}">${p.side.toUpperCase()}</td>
+      <td>${fmtNum(p.size)}</td>
+      <td>${fmtUsd(p.entryPrice)}</td>
+      <td>${fmtUsd(p.positionValue)}</td>
+      <td class="${signCls(p.unrealizedPnl)}">${fmtUsd(p.unrealizedPnl)}</td>
+      <td class="${signCls(p.returnOnEquity)}">${pct(p.returnOnEquity)}</td>
+      <td>${p.liquidationPrice!=null?fmtUsd(p.liquidationPrice):"—"}</td>
+      <td>${p.leverage.value}× ${p.leverage.type}</td></tr>`).join("");
+    out.innerHTML=`<div class="status">${d.count} open position${d.count>1?"s":""}</div>
+      <div class="tbl-wrap"><table><thead><tr>
+      <th>Coin</th><th>Side</th><th>Size</th><th>Entry</th><th>Value</th><th>uPnL</th><th>ROE</th><th>Liq.</th><th>Leverage</th>
+      </tr></thead><tbody>${rows}</tbody></table></div>`;
+  }catch(e){ out.innerHTML=`<div class="status err">${e.message}</div>`; }
+}
+async function aiPositions(){
+  if(!aiOn){ $("#walletOut").insertAdjacentHTML("beforeend", aiNote()); return; }
+  const out=$("#walletOut");
+  out.insertAdjacentHTML("beforeend",`<div class="status" id="aiPosLoad">✦ Reading risk… (model thinking)</div>`);
+  try{
+    const d = await call("/analyze/positions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({wallet:lastWallet})});
+    const a=d.analysis;
+    $("#aiPosLoad").remove();
+    out.insertAdjacentHTML("beforeend",`<div class="ai-panel"><div class="ai-bar"><span class="spark">✦</span> AI risk read</div>
+      <div class="ai-body">
+        <div class="verdict-row">
+          <span class="badge-lvl lvl-${a.riskLevel}">Risk: ${a.riskLevel}</span>
+          <span class="badge-lvl" style="background:var(--surface2);color:var(--muted)">Bias: ${a.netBias}</span>
+        </div>
+        <p class="ai-sum">${a.summary}</p>
+        <div class="siglist">${(a.signals||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div>
+      </div></div>`);
+  }catch(e){ const l=$("#aiPosLoad"); if(l)l.outerHTML=`<div class="status err">AI: ${e.message}</div>`; }
+}
+$("#walletBtn").onclick=loadPositions;
+$("#walletAi").onclick=aiPositions;
+
+/* 2. vault */
+async function loadVault(){
+  const v=$("#vaultIn").value.trim();
+  const out=$("#vaultOut");
+  if(!v){ out.innerHTML=`<div class="status err">Enter a vault address.</div>`; return; }
+  lastVault=v; $("#vaultAi").disabled=false;
+  out.innerHTML=`<div class="status">Loading vault…</div>`;
+  try{
+    const d=await call("/vault",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({vault:v})});
+    out.innerHTML=`<div class="vault-head">
+      <h3>${d.name} ${d.isClosed?'<span class="short" style="font-size:13px">· closed</span>':''}</h3>
+      <p class="desc">${d.description||"No description."}</p></div>
+      <div class="cards">
+        <div class="mini"><div class="k">APR</div><div class="v ${signCls(d.apr)}">${pct(d.apr)}</div></div>
+        <div class="mini"><div class="k">Followers</div><div class="v">${d.followerCount}</div></div>
+        <div class="mini"><div class="k">Leader fee</div><div class="v">${pct(d.leaderCommission)}</div></div>
+        <div class="mini"><div class="k">Distributable</div><div class="v">${fmtUsdC(d.maxDistributable)}</div></div>
+        <div class="mini"><div class="k">Withdrawable</div><div class="v">${fmtUsdC(d.maxWithdrawable)}</div></div>
+        <div class="mini"><div class="k">Deposits</div><div class="v">${d.allowDeposits?"Open":"Closed"}</div></div>
+      </div>
+      <div class="meta">Leader <a href="${hlLink(d.leader)}" target="_blank">${short(d.leader)}</a> · Vault ${short(d.vaultAddress)}</div>`;
+  }catch(e){ out.innerHTML=`<div class="status err">${e.message}</div>`; }
+}
+async function aiVault(){
+  if(!aiOn){ $("#vaultOut").insertAdjacentHTML("beforeend", aiNote()); return; }
+  const out=$("#vaultOut");
+  out.insertAdjacentHTML("beforeend",`<div class="status" id="aiVaultLoad">✦ Running due diligence… (model thinking)</div>`);
+  try{
+    const d=await call("/analyze/vault",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({vault:lastVault})});
+    const a=d.analysis;
+    $("#aiVaultLoad").remove();
+    out.insertAdjacentHTML("beforeend",`<div class="ai-panel"><div class="ai-bar"><span class="spark">✦</span> AI verdict</div>
+      <div class="ai-body">
+        <div class="verdict-row">
+          <span class="badge-lvl v-${a.verdict}">${a.verdict}</span>
+          <span class="score">Score ${a.score}/100</span>
+        </div>
+        <p class="ai-sum">${a.summary}</p>
+        <div class="twocol">
+          <div><h4>For</h4><div class="siglist">${(a.pros||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div>
+          <div><h4>Against</h4><div class="siglist">${(a.cons||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div>
+        </div>
+      </div></div>`);
+  }catch(e){ const l=$("#aiVaultLoad"); if(l)l.outerHTML=`<div class="status err">AI: ${e.message}</div>`; }
+}
+$("#vaultBtn").onclick=loadVault;
+$("#vaultAi").onclick=aiVault;
+
+/* 3. vaults */
+async function loadVaults(){
+  const out=$("#vaultsOut");
+  const sort=$("#sortIn").value, order=$("#orderIn").value, limit=$("#limitIn").value;
+  out.innerHTML=`<div class="status">Loading vaults…</div>`;
+  try{
+    const d=await call(`/vaults?sort=${sort}&order=${order}&limit=${limit}`);
+    const rows=d.vaults.map((v,i)=>`<tr>
+      <td>${i+1}</td>
+      <td class="name-sans">${v.name}</td>
+      <td><a href="${hlLink(v.vaultAddress)}" target="_blank">${short(v.vaultAddress)}</a></td>
+      <td>${fmtUsdC(v.tvl)}</td>
+      <td class="${signCls(v.apr)}">${pct(v.apr)}</td>
+      <td class="${v.status==='open'?'long':'short'}">${v.status}</td>
+      <td>${new Date(v.createTimeMillis).toLocaleDateString()}</td></tr>`).join("");
+    out.innerHTML=`<div class="status">Showing ${d.count} of ${d.total.toLocaleString()} vaults</div>
+      <div class="tbl-wrap"><table><thead><tr>
+      <th>#</th><th>Name</th><th>Address</th><th>TVL</th><th>APR</th><th>Status</th><th>Created</th>
+      </tr></thead><tbody>${rows}</tbody></table></div>`;
+  }catch(e){ out.innerHTML=`<div class="status err">${e.message}</div>`; }
+}
+$("#vaultsBtn").onclick=loadVaults;
+loadVaults();
+</script>
+</body>
+</html>
