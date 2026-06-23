@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HyperScope — App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23121512'/><text x='50' y='73' font-size='62' font-family='monospace' font-weight='700' fill='%238ef23d' text-anchor='middle'>H</text></svg>">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="nav">
+  <div class="wrap">
+    <div class="brand"><a href="/" style="display:flex;align-items:center;gap:12px"><span class="mark">H</span><b>HyperScope</b></a><span class="crumb">/ APP</span></div>
+    <div class="nav-right">
+      <span class="ghost" id="aiGhost">AI checking…</span>
+      <a class="ghost-link" href="https://github.com/Jr-kenny/hyperscope" target="_blank" rel="noopener">Source</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="side">
+      <a class="side-back" href="/">← Back to home</a>
+      <div class="side-h">Services</div>
+      <div class="side-list" id="sideList"></div>
+    </aside>
+
+    <!-- WORKSPACE -->
+    <main class="work">
+      <div class="work-head">
+        <h2 id="wTitle">—</h2>
+        <div class="wmeta" id="wMeta"></div>
+      </div>
+      <p class="work-lead" id="wLead"></p>
+      <div id="wForm"></div>
+      <div class="out" id="wOut"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const fmtUsd = n => "$"+Number(n).toLocaleString(undefined,{maximumFractionDigits:2});
+const fmtUsdC = n => { n=Number(n); if(n>=1e9)return "$"+(n/1e9).toFixed(2)+"B"; if(n>=1e6)return "$"+(n/1e6).toFixed(2)+"M"; if(n>=1e3)return "$"+(n/1e3).toFixed(1)+"K"; return "$"+n.toFixed(0); };
+const fmtNum = n => Number(n).toLocaleString(undefined,{maximumFractionDigits:4});
+const pct = n => (Number(n)*100).toFixed(2)+"%";
+const short = a => a.slice(0,6)+"…"+a.slice(-4);
+const hlLink = a => `https://app.hyperliquid.xyz/explorer/address/${a}`;
+const signCls = n => Number(n)>=0?"pos":"neg";
+const addr = v => /^0x[a-fA-F0-9]{40}$/.test((v||"").trim());
+
+async function call(path, opts){ const r=await fetch(path,opts); const j=await r.json(); if(j.error) throw new Error(j.error); return j.data; }
+
+let aiOn=false;
+
+/* service registry */
+const SERVICES = {
+  positions: {
+    icon:"P", name:"Wallet Positions", sub:"POST",
+    title:"Wallet Positions", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">SLA &lt; 2s</span>'],
+    lead:"Open perpetual positions for any wallet, fully normalized.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      load(out,"Loading positions…"); const d=await call("/positions",P({wallet:w})); renderPositions(d,out); }
+  },
+  airisk: {
+    icon:"✦", name:"AI Risk Read", sub:"AI · POST", ai:true,
+    title:"AI Risk Read", meta:['<span class="mbadge ai">✦ AI</span>','<span class="mbadge method">POST</span>'],
+    lead:"Feed a wallet's positions to a model and get a grounded risk assessment.",
+    form:`<p class="field">Wallet address</p><div class="row"><input id="in" placeholder="0x… wallet address" spellcheck="false"><button class="run lime" id="go">✦ Analyze</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>`,
+    run: async (out)=>{ const w=$("#in").value.trim(); if(!addr(w)) return err(out,"Enter a valid 0x wallet address.");
+      if(!aiOn) return out.innerHTML=aiNote(); load(out,"✦ Reading risk… (model thinking)");
+      const d=await call("/analyze/positions",P({wallet:w})); renderRisk(d.analysis,out); }
+  },
+  vault: {
+    icon:"V", name:"Vault Review", sub:"POST",
+    title:"Vault Review", meta:['<span class="mbadge method">POST</span>','<span class="mbadge">SLA &lt; 2s</span>'],
+    lead:"Full breakdown of a single vault.",
+    form:`<p class="field">Vault address</p><div class="row"><input id="in" placeholder="0x… vault address" spellcheck="false"><button class="run" id="go">Run</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xdfc24b077bc1425ad1dea75bcb6f8158e10df303">try: HLP vault</span></div>`,
+    run: async (out)=>{ const v=$("#in").value.trim(); if(!addr(v)) return err(out,"Enter a valid 0x vault address.");
+      load(out,"Loading vault…"); const d=await call("/vault",P({vault:v})); renderVault(d,out); }
+  },
+  aivault: {
+    icon:"✦", name:"AI Vault Verdict", sub:"AI · POST", ai:true,
+    title:"AI Vault Verdict", meta:['<span class="mbadge ai">✦ AI</span>','<span class="mbadge method">POST</span>'],
+    lead:"Due diligence on a vault, then a follow / watch / avoid verdict.",
+    form:`<p class="field">Vault address</p><div class="row"><input id="in" placeholder="0x… vault address" spellcheck="false"><button class="run lime" id="go">✦ Get verdict</button></div>
+      <div class="row" style="margin-top:10px"><span class="chip" data-val="0xdfc24b077bc1425ad1dea75bcb6f8158e10df303">try: HLP vault</span></div>`,
+    run: async (out)=>{ const v=$("#in").value.trim(); if(!addr(v)) return err(out,"Enter a valid 0x vault address.");
+      if(!aiOn) return out.innerHTML=aiNote(); load(out,"✦ Running due diligence… (model thinking)");
+      const d=await call("/analyze/vault",P({vault:v})); renderVerdict(d.analysis,out); }
+  },
+  vaults: {
+    icon:"D", name:"Discover Vaults", sub:"GET",
+    title:"Discover Vaults", meta:['<span class="mbadge method">GET</span>','<span class="mbadge">cached</span>'],
+    lead:"A sortable shortlist across every live vault.",
+    form:`<p class="field">Query</p><div class="row">
+      <select id="sortIn"><option value="tvl">Sort by TVL</option><option value="apr">Sort by APR</option><option value="createTimeMillis">Sort by newest</option></select>
+      <select id="orderIn"><option value="desc">High to low</option><option value="asc">Low to high</option></select>
+      <select id="limitIn"><option value="10">Top 10</option><option value="25" selected>Top 25</option><option value="50">Top 50</option></select>
+      <button class="run" id="go">Run</button></div>`,
+    run: async (out)=>{ const sort=$("#sortIn").value,order=$("#orderIn").value,limit=$("#limitIn").value;
+      load(out,"Loading vaults…"); const d=await call(`/vaults?sort=${sort}&order=${order}&limit=${limit}`); renderVaults(d,out); }
+  }
+};
+const P = body => ({method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+const load=(out,m)=>out.innerHTML=`<div class="status">${m}</div>`;
+const err=(out,m)=>out.innerHTML=`<div class="status err">${m}</div>`;
+const aiNote=()=>`<div class="ai-panel"><div class="ai-bar">✦ AI offline</div><div class="ai-body"><div class="ai-note">Set <span class="mono">NVIDIA_API_KEY</span> (free at build.nvidia.com) to enable AI analysis on this instance.</div></div></div>`;
+
+/* renderers */
+function renderPositions(d,out){
+  if(!d.count) return out.innerHTML=`<div class="status">No open positions for this wallet.</div>`;
+  const rows=d.positions.map(p=>`<tr><td class="name-sans">${p.coin}</td><td class="${p.side}">${p.side.toUpperCase()}</td>
+    <td>${fmtNum(p.size)}</td><td>${fmtUsd(p.entryPrice)}</td><td>${fmtUsd(p.positionValue)}</td>
+    <td class="${signCls(p.unrealizedPnl)}">${fmtUsd(p.unrealizedPnl)}</td><td class="${signCls(p.returnOnEquity)}">${pct(p.returnOnEquity)}</td>
+    <td>${p.liquidationPrice!=null?fmtUsd(p.liquidationPrice):"—"}</td><td>${p.leverage.value}× ${p.leverage.type}</td></tr>`).join("");
+  out.innerHTML=`<div class="status">${d.count} open position${d.count>1?"s":""}</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Coin</th><th>Side</th><th>Size</th><th>Entry</th><th>Value</th><th>uPnL</th><th>ROE</th><th>Liq.</th><th>Leverage</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function renderRisk(a,out){ out.innerHTML=`<div class="ai-panel"><div class="ai-bar">✦ AI risk read</div><div class="ai-body">
+  <div class="verdict-row"><span class="badge-lvl lvl-${a.riskLevel}">Risk: ${a.riskLevel}</span>
+  <span class="badge-lvl" style="background:var(--surface2);color:var(--muted)">Bias: ${a.netBias}</span></div>
+  <p class="ai-sum">${a.summary}</p><div class="siglist">${(a.signals||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div></div>`; }
+function renderVault(d,out){ out.innerHTML=`<div class="vault-head"><h3>${d.name} ${d.isClosed?'<span class="short" style="font-size:12px">· closed</span>':''}</h3>
+  <p class="desc">${d.description||"No description."}</p></div>
+  <div class="cards">
+    <div class="mini"><div class="k">APR</div><div class="v ${signCls(d.apr)}">${pct(d.apr)}</div></div>
+    <div class="mini"><div class="k">Followers</div><div class="v">${d.followerCount}</div></div>
+    <div class="mini"><div class="k">Leader fee</div><div class="v">${pct(d.leaderCommission)}</div></div>
+    <div class="mini"><div class="k">Distributable</div><div class="v">${fmtUsdC(d.maxDistributable)}</div></div>
+    <div class="mini"><div class="k">Withdrawable</div><div class="v">${fmtUsdC(d.maxWithdrawable)}</div></div>
+    <div class="mini"><div class="k">Deposits</div><div class="v">${d.allowDeposits?"Open":"Closed"}</div></div></div>
+  <div class="meta">Leader <a href="${hlLink(d.leader)}" target="_blank">${short(d.leader)}</a> · Vault ${short(d.vaultAddress)}</div>`; }
+function renderVerdict(a,out){ out.innerHTML=`<div class="ai-panel"><div class="ai-bar">✦ AI verdict</div><div class="ai-body">
+  <div class="verdict-row"><span class="badge-lvl v-${a.verdict}">${a.verdict}</span><span class="score">Score ${a.score}/100</span></div>
+  <p class="ai-sum">${a.summary}</p>
+  <div class="twocol"><div><h4>For</h4><div class="siglist">${(a.pros||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div>
+  <div><h4>Against</h4><div class="siglist">${(a.cons||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div></div></div></div>`; }
+function renderVaults(d,out){ const rows=d.vaults.map((v,i)=>`<tr><td>${i+1}</td><td class="name-sans">${v.name}</td>
+  <td><a href="${hlLink(v.vaultAddress)}" target="_blank">${short(v.vaultAddress)}</a></td>
+  <td>${fmtUsdC(v.tvl)}</td><td class="${signCls(v.apr)}">${pct(v.apr)}</td>
+  <td class="${v.status==='open'?'long':'short'}">${v.status}</td><td>${new Date(v.createTimeMillis).toLocaleDateString()}</td></tr>`).join("");
+  out.innerHTML=`<div class="status">Showing ${d.count} of ${d.total.toLocaleString()} vaults</div>
+  <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Address</th><th>TVL</th><th>APR</th><th>Status</th><th>Created</th></tr></thead><tbody>${rows}</tbody></table></div>`; }
+
+/* build sidebar */
+const order=["positions","airisk","vault","aivault","vaults"];
+$("#sideList").innerHTML = order.map(id=>{ const s=SERVICES[id];
+  return `<a class="side-item" data-id="${id}" href="/app?s=${id}"><span class="si-ico">${s.icon}</span>
+    <span><span class="si-name">${s.name}</span><br><span class="si-sub">${s.sub}</span></span></a>`;
+}).join("");
+
+/* select a service */
+function select(id){
+  if(!SERVICES[id]) id="positions";
+  const s=SERVICES[id];
+  document.querySelectorAll(".side-item").forEach(e=>e.classList.toggle("active", e.dataset.id===id));
+  $("#wTitle").textContent=s.title;
+  $("#wMeta").innerHTML=s.meta.join("");
+  $("#wLead").textContent=s.lead;
+  $("#wForm").innerHTML=s.form;
+  $("#wOut").innerHTML="";
+  const out=$("#wOut");
+  const go=$("#go"); if(go) go.onclick=()=>s.run(out).catch(e=>err(out, (s.ai?"AI: ":"")+e.message));
+  document.querySelectorAll("#wForm .chip").forEach(c=>c.onclick=()=>{ $("#in").value=c.dataset.val; });
+  const inp=$("#in"); if(inp) inp.addEventListener("keydown",e=>{ if(e.key==="Enter") go.click(); });
+  history.replaceState(null,"",`/app?s=${id}`);
+}
+document.querySelectorAll(".side-item").forEach(e=>e.addEventListener("click",ev=>{ ev.preventDefault(); select(e.dataset.id); }));
+
+/* ai status + init */
+(async()=>{ try{ aiOn=(await call("/ai/status")).enabled; }catch(e){}
+  const g=$("#aiGhost"); g.textContent= aiOn?"● AI online":"○ AI offline"; g.style.color= aiOn?"var(--green)":"var(--faint)";
+})();
+const params=new URLSearchParams(location.search);
+select(params.get("s")||"positions");
+</script>
+</body>
+</html>

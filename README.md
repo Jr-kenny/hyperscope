@@ -76,7 +76,7 @@ Or in watch mode while developing:
 npm run dev
 ```
 
-Then open `http://localhost:3000` for the UI, or hit the endpoints directly.
+Then open `http://localhost:3000` for the landing page, `http://localhost:3000/app` for the workspace where you run each service (deep-linkable per tool, e.g. `/app?s=vault`), or hit the endpoints directly.
 
 ### Turning on the AI layer
 

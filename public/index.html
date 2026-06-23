@@ -4,195 +4,53 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>HyperScope — Hyperliquid perception tools for trading agents</title>
+<meta name="description" content="Read-only Hyperliquid data plus AI risk reads and vault verdicts, as clean JSON an autonomous trading agent can act on." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23121512'/><text x='50' y='73' font-size='62' font-family='monospace' font-weight='700' fill='%238ef23d' text-anchor='middle'>H</text></svg>">
-<style>
-  :root{
-    --bg:#eef0e8; --surface:#ffffff; --surface2:#f5f6f0;
-    --ink:#101310; --muted:#878d83; --faint:#a7ada3;
-    --line:#e5e7df; --line2:#d8dbd0;
-    --lime:#8ef23d; --lime-hi:#7ee52a; --lime-soft:#e7fbcf;
-    --green:#4ea310;
-    --long:#3a9e12; --short:#e0483d; --blue:#2f7de0;
-    --shadow:0 1px 2px rgba(16,20,15,.04), 0 10px 30px -16px rgba(16,20,15,.14);
-    --r:18px;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;color:var(--ink);background:var(--bg);
-    font-family:"Schibsted Grotesk",-apple-system,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
-  .mono{font-family:"JetBrains Mono",monospace}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-  a{color:var(--green);text-decoration:none}
-  a:hover{text-decoration:underline}
-
-  /* top nav */
-  .nav{border-bottom:1px solid var(--line);background:rgba(238,240,232,.8);backdrop-filter:blur(8px);position:sticky;top:0;z-index:30}
-  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
-  .brand{display:flex;align-items:center;gap:12px}
-  .mark{width:34px;height:34px;border-radius:9px;background:var(--lime);display:grid;place-items:center;
-    color:var(--ink);font-family:"JetBrains Mono";font-weight:700;font-size:19px}
-  .brand b{font-weight:800;letter-spacing:-.02em;font-size:16px}
-  .brand .crumb{font-family:"JetBrains Mono";font-size:12px;color:var(--faint);letter-spacing:.06em}
-  .nav-right{display:flex;align-items:center;gap:12px}
-  .ghost{font-family:"JetBrains Mono";font-size:12px;color:var(--muted);font-weight:500}
-  .btn-lime{background:var(--lime);color:var(--ink);font-weight:700;font-size:13.5px;border:0;cursor:pointer;
-    padding:9px 16px;border-radius:22px;font-family:inherit;transition:background .15s}
-  .btn-lime:hover{background:var(--lime-hi)}
-  .avatar{width:32px;height:32px;border-radius:50%;background:conic-gradient(from 120deg,var(--lime),#bdf58a,var(--lime))}
-
-  /* profile card */
-  .profile{margin-top:30px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:30px 32px;box-shadow:var(--shadow)}
-  .profile .head{display:flex;gap:18px;align-items:flex-start}
-  .pfp{width:64px;height:64px;border-radius:16px;background:var(--ink);display:grid;place-items:center;flex:none;
-    color:var(--lime);font-family:"JetBrains Mono";font-weight:700;font-size:30px}
-  .ptitle{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .ptitle h1{font-size:26px;letter-spacing:-.025em;margin:0;font-weight:800}
-  .live{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono";font-size:10.5px;font-weight:600;
-    letter-spacing:.08em;text-transform:uppercase;color:var(--green);background:var(--lime-soft);padding:4px 10px;border-radius:20px}
-  .live .d{width:6px;height:6px;border-radius:50%;background:var(--green)}
-  .subline{font-family:"JetBrains Mono";font-size:12.5px;color:var(--faint);margin-top:7px;display:flex;gap:16px;flex-wrap:wrap}
-  .cat{display:inline-block;margin-top:14px;font-size:12.5px;font-weight:600;background:var(--surface2);border:1px solid var(--line);
-    color:var(--muted);padding:5px 12px;border-radius:8px}
-  .pdesc{color:var(--muted);max-width:760px;margin:16px 0 0;line-height:1.6}
-  .pdesc .site{color:var(--green);font-weight:600}
-
-  /* stat tiles */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:18px;background:var(--surface);
-    border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
-  .stat{padding:20px 22px;border-right:1px solid var(--line)}
-  .stat:last-child{border-right:0}
-  .stat .k{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
-  .stat .v{font-family:"JetBrains Mono";font-size:24px;font-weight:700;margin-top:9px;letter-spacing:-.02em}
-  .stat .v.g{color:var(--green)}
-
-  /* services */
-  .sec{display:flex;align-items:center;gap:10px;margin:40px 0 4px}
-  .sec .dash{color:var(--green);font-family:"JetBrains Mono"}
-  .sec h2{font-family:"JetBrains Mono";font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin:0}
-  .sec .n{color:var(--faint);font-family:"JetBrains Mono";font-size:12px}
-
-  .svc{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-top:14px;box-shadow:var(--shadow);overflow:hidden}
-  .svc-top{padding:22px 24px;cursor:pointer;display:block}
-  .svc-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
-  .svc-name{font-size:17px;font-weight:700;letter-spacing:-.01em}
-  .svc-meta{display:flex;align-items:center;gap:8px;flex:none}
-  .mbadge{font-family:"JetBrains Mono";font-size:10.5px;font-weight:600;letter-spacing:.04em;padding:5px 9px;border-radius:7px;
-    background:var(--surface2);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
-  .mbadge.ai{background:var(--lime-soft);border-color:transparent;color:var(--green)}
-  .mbadge.method{color:var(--blue)}
-  .svc-desc{color:var(--muted);margin-top:7px;max-width:640px;font-size:14px}
-  .try{display:flex;justify-content:flex-end;margin-top:14px}
-  .try a{font-family:"JetBrains Mono";font-size:13px;font-weight:600;color:var(--green)}
-  .try a .arr{transition:transform .15s;display:inline-block}
-  .svc.open .try a .arr{transform:rotate(90deg)}
-
-  .svc-body{display:none;padding:0 24px 24px;border-top:1px solid var(--line);margin-top:2px}
-  .svc.open .svc-body{display:block;animation:fade .3s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-  .svc-body .inner{padding-top:20px}
-
-  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  input,select{font-family:"JetBrains Mono";font-size:13px;color:var(--ink);background:var(--surface2);
-    border:1px solid var(--line2);border-radius:10px;padding:11px 13px;outline:none}
-  input{flex:1;min-width:260px}
-  input:focus,select:focus{border-color:var(--green);background:#fff}
-  select{font-family:inherit;font-size:13px;cursor:pointer}
-  .run{background:var(--ink);color:#fff;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:13.5px;
-    padding:11px 20px;border-radius:10px;transition:transform .08s}
-  .run:active{transform:translateY(1px)}
-  .run.lime{background:var(--lime);color:var(--ink)}
-  .run.lime:hover{background:var(--lime-hi)}
-  .chip{cursor:pointer;font-family:"JetBrains Mono";font-size:11px;color:var(--muted);background:var(--surface2);
-    border:1px dashed var(--line2);padding:5px 10px;border-radius:18px}
-  .chip:hover{border-style:solid;color:var(--green)}
-  .status{font-family:"JetBrains Mono";font-size:12px;color:var(--muted);padding:12px 0}
-  .status.err{color:var(--short)}
-  .out{margin-top:8px}
-
-  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin-top:12px}
-  table{width:100%;border-collapse:collapse;font-family:"JetBrains Mono";font-size:12px;font-variant-numeric:tabular-nums}
-  th{text-align:right;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);
-    padding:11px 13px;background:var(--surface2);border-bottom:1px solid var(--line);white-space:nowrap}
-  th:first-child,td:first-child{text-align:left}
-  td{padding:11px 13px;border-bottom:1px solid var(--line);white-space:nowrap}
-  tbody tr:last-child td{border-bottom:0}
-  tbody tr:hover td{background:var(--surface2)}
-  .long{color:var(--long);font-weight:600}.short{color:var(--short);font-weight:600}
-  .pos{color:var(--long)}.neg{color:var(--short)}
-  .name-sans{font-family:"Schibsted Grotesk";font-weight:600}
-
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
-  .mini{background:var(--surface2);border:1px solid var(--line);border-radius:11px;padding:14px 15px}
-  .mini .k{font-family:"JetBrains Mono";font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
-  .mini .v{font-family:"JetBrains Mono";font-size:17px;font-weight:700;margin-top:6px}
-  .vault-head h3{font-size:19px;margin:14px 0 3px;letter-spacing:-.01em}
-  .vault-head .desc{color:var(--muted);max-width:700px;margin:0;font-size:13.5px}
-  .meta{font-family:"JetBrains Mono";font-size:11px;color:var(--faint);margin-top:13px}
-
-  /* ai verdict */
-  .ai-panel{margin-top:16px;border:1px solid var(--line2);border-radius:13px;overflow:hidden}
-  .ai-bar{display:flex;align-items:center;gap:8px;padding:11px 16px;background:var(--lime-soft);
-    font-family:"JetBrains Mono";font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
-  .ai-body{padding:18px}
-  .verdict-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-  .badge-lvl{font-family:"JetBrains Mono";font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 13px;border-radius:8px}
-  .lvl-low,.v-follow{background:#e2f6cf;color:#3f8a0a}
-  .lvl-moderate,.v-watch{background:#fdf0d2;color:#9a6a06}
-  .lvl-high{background:#fbe2da;color:#b8482f}
-  .lvl-extreme,.v-avoid{background:#fbd9d3;color:#b3261a}
-  .score{font-family:"JetBrains Mono";font-weight:700;font-size:14px}
-  .ai-sum{margin:0 0 13px;line-height:1.6;font-size:14px}
-  .siglist{display:flex;flex-direction:column;gap:7px}
-  .sig{display:flex;gap:9px;font-size:13px;color:var(--muted)}
-  .sig::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--lime);margin-top:7px;flex:none}
-  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-  .twocol h4{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;margin:0 0 8px;color:var(--faint)}
-  .ai-note{font-size:13px;color:var(--muted);background:var(--surface2);border:1px dashed var(--line2);border-radius:10px;padding:12px 14px}
-
-  footer{margin:54px 0 46px;color:var(--faint);font-family:"JetBrains Mono";font-size:11.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.stat:nth-child(2){border-right:0}.twocol{grid-template-columns:1fr}.ptitle h1{font-size:22px}}
-</style>
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
 <div class="nav">
   <div class="wrap">
-    <div class="brand">
-      <span class="mark">H</span><b>HyperScope</b><span class="crumb">/ TOOLS</span>
-    </div>
+    <div class="brand"><span class="mark">H</span><b>HyperScope</b><span class="crumb">/ HOME</span></div>
     <div class="nav-right">
       <span class="ghost" id="aiGhost">AI checking…</span>
-      <a class="btn-lime" href="https://github.com/Jr-kenny/hyperscope" target="_blank" rel="noopener">View source</a>
-      <span class="avatar"></span>
+      <a class="ghost-link" href="https://github.com/Jr-kenny/hyperscope" target="_blank" rel="noopener">Source</a>
+      <a class="btn-lime" href="/app">Launch app →</a>
     </div>
   </div>
 </div>
 
 <div class="wrap">
 
-  <!-- PROFILE -->
-  <div class="profile">
-    <div class="head">
-      <div class="pfp">H</div>
-      <div style="flex:1">
-        <div class="ptitle">
-          <h1>HyperScope — Hyperliquid Agent Tools</h1>
-          <span class="live"><span class="d"></span> Live</span>
-        </div>
-        <div class="subline">
-          <span>read-only · no auth</span>
-          <span>Bitget AI Hackathon S1</span>
-          <span>5 services</span>
-        </div>
-        <span class="cat">Trading Infra</span>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Bitget AI Hackathon S1 · Trading Infra</span>
+      <h1>Perception tools for trading agents on Hyperliquid</h1>
+      <p class="hero-sub">HyperScope turns Hyperliquid's raw on-chain data into clean, normalized signals an autonomous agent can act on, then layers AI judgment on top: position risk reads and vault verdicts. No keys, no setup for the data tools.</p>
+      <div class="hero-cta">
+        <a class="btn-lime lg" href="/app">Launch app →</a>
+        <a class="btn-ghost lg" href="#services">Browse services</a>
+      </div>
+      <div class="hero-tags">
+        <span>read-only</span><span>no auth</span><span>same JSON every call</span><span>NVIDIA NIM</span>
       </div>
     </div>
-    <p class="pdesc">HyperScope is a perception layer for autonomous trading agents on Hyperliquid. It turns raw on-chain data into clean, normalized signals an agent can act on, then layers AI judgment on top: position risk reads and vault verdicts. No keys, no setup for the data tools.
-    <br>Source: <a class="site" href="https://github.com/Jr-kenny/hyperscope" target="_blank" rel="noopener">github.com/Jr-kenny/hyperscope</a></p>
-  </div>
+    <div class="hero-code">
+      <div class="code-bar"><span class="cdot"></span><span class="cdot"></span><span class="cdot"></span><span class="cfile">POST /analyze/vault</span></div>
+      <pre class="mono"><span class="c-key">"verdict"</span>: <span class="c-str">"watch"</span>,
+<span class="c-key">"score"</span>: <span class="c-num">62</span>,
+<span class="c-key">"summary"</span>: <span class="c-str">"Deep liquidity and</span>
+<span class="c-str">  a credible leader, but the</span>
+<span class="c-str">  APR is thin for the risk."</span>,
+<span class="c-key">"pros"</span>: [<span class="c-str">"$274M TVL"</span>, <span class="c-str">"0% fee"</span>],
+<span class="c-key">"cons"</span>: [<span class="c-str">"low APR"</span>, <span class="c-str">"MM exposure"</span>]</pre>
+    </div>
+  </section>
 
   <!-- STATS -->
   <div class="stats">
@@ -203,132 +61,66 @@
   </div>
 
   <!-- SERVICES -->
-  <div class="sec"><span class="dash">—</span><h2>Services</h2><span class="n">(5)</span></div>
+  <div class="sec" id="services"><span class="dash">—</span><h2>Services</h2><span class="n">(5)</span></div>
+  <p class="sec-lead">Five composable tools. Each one is a plain JSON endpoint and a one-click try in the app.</p>
 
-  <!-- svc 1: positions -->
-  <div class="svc" data-svc="positions">
-    <div class="svc-top">
-      <div class="svc-row">
-        <div>
-          <div class="svc-name">Wallet Positions</div>
-          <div class="svc-desc">Open perpetual positions for any wallet, fully normalized: side, size, entry, value, uPnL, ROE, liquidation and leverage.</div>
-        </div>
-        <div class="svc-meta">
-          <span class="mbadge method">POST</span>
-          <span class="mbadge">SLA &lt; 2s</span>
-        </div>
-      </div>
-      <div class="try"><a>Try this <span class="arr">→</span></a></div>
-    </div>
-    <div class="svc-body"><div class="inner">
-      <div class="row">
-        <input id="walletIn" placeholder="0x… wallet address" spellcheck="false" />
-        <button class="run" id="walletBtn">Run</button>
-      </div>
-      <div class="row" style="margin-top:10px"><span class="chip" data-fill="walletIn" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>
-      <div class="out" id="walletOut"></div>
-    </div></div>
+  <div class="svc-grid">
+    <a class="svc-card" href="/app?s=positions">
+      <div class="svc-meta"><span class="mbadge method">POST</span><span class="mbadge">SLA &lt; 2s</span></div>
+      <div class="svc-name">Wallet Positions</div>
+      <div class="svc-desc">Open perpetual positions for any wallet, normalized: side, size, entry, value, uPnL, ROE, liquidation, leverage.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card" href="/app?s=airisk">
+      <div class="svc-meta"><span class="mbadge ai">✦ AI</span><span class="mbadge method">POST</span></div>
+      <div class="svc-name">AI Risk Read</div>
+      <div class="svc-desc">A grounded risk assessment of a wallet's positions: risk level, net directional bias, and the signals behind it.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card" href="/app?s=vault">
+      <div class="svc-meta"><span class="mbadge method">POST</span><span class="mbadge">SLA &lt; 2s</span></div>
+      <div class="svc-name">Vault Review</div>
+      <div class="svc-desc">Full breakdown of a single vault: leader, strategy, APR, followers, commission, deposit and withdraw capacity.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card" href="/app?s=aivault">
+      <div class="svc-meta"><span class="mbadge ai">✦ AI</span><span class="mbadge method">POST</span></div>
+      <div class="svc-name">AI Vault Verdict</div>
+      <div class="svc-desc">Due diligence on a vault, then a follow / watch / avoid verdict with a score and the case for and against.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card" href="/app?s=vaults">
+      <div class="svc-meta"><span class="mbadge method">GET</span><span class="mbadge">cached</span></div>
+      <div class="svc-name">Discover Vaults</div>
+      <div class="svc-desc">A sortable shortlist across every live vault. Rank by TVL, APR or age, out of thousands.</div>
+      <div class="try">Try this <span class="arr">→</span></div>
+    </a>
+    <a class="svc-card alt" href="/api" target="_blank">
+      <div class="svc-meta"><span class="mbadge">JSON</span></div>
+      <div class="svc-name">The raw API</div>
+      <div class="svc-desc">Every service is a JSON endpoint with the same envelope: version, service, request, data. Wire it straight into an agent.</div>
+      <div class="try">View endpoints <span class="arr">→</span></div>
+    </a>
   </div>
 
-  <!-- svc 2: ai risk -->
-  <div class="svc" data-svc="airisk">
-    <div class="svc-top">
-      <div class="svc-row">
-        <div>
-          <div class="svc-name">AI Risk Read</div>
-          <div class="svc-desc">Feed a wallet's positions to a model and get a grounded risk assessment: risk level, net directional bias, and the signals behind it.</div>
-        </div>
-        <div class="svc-meta">
-          <span class="mbadge ai">✦ AI</span>
-          <span class="mbadge method">POST</span>
-        </div>
-      </div>
-      <div class="try"><a>Try this <span class="arr">→</span></a></div>
+  <!-- WHY -->
+  <div class="sec"><span class="dash">—</span><h2>Why it matters</h2></div>
+  <div class="why">
+    <div class="why-card">
+      <div class="why-n">01</div>
+      <h3>Perception is the boring half</h3>
+      <p>Every agent that touches Hyperliquid rewrites the same plumbing: parse positions, derive side from the sign, coerce stringified numbers, hunt down a vault list that isn't in the docs. HyperScope does it once.</p>
     </div>
-    <div class="svc-body"><div class="inner">
-      <div class="row">
-        <input id="airiskIn" placeholder="0x… wallet address" spellcheck="false" />
-        <button class="run lime" id="airiskBtn">✦ Analyze</button>
-      </div>
-      <div class="row" style="margin-top:10px"><span class="chip" data-fill="airiskIn" data-val="0xd6e56265890b76413d1d527eb9b75e334c0c5b42">try: active trader</span></div>
-      <div class="out" id="airiskOut"></div>
-    </div></div>
-  </div>
-
-  <!-- svc 3: vault review -->
-  <div class="svc" data-svc="vault">
-    <div class="svc-top">
-      <div class="svc-row">
-        <div>
-          <div class="svc-name">Vault Review</div>
-          <div class="svc-desc">Full breakdown of a single vault: leader, strategy, APR, followers, commission, and deposit / withdraw capacity.</div>
-        </div>
-        <div class="svc-meta">
-          <span class="mbadge method">POST</span>
-          <span class="mbadge">SLA &lt; 2s</span>
-        </div>
-      </div>
-      <div class="try"><a>Try this <span class="arr">→</span></a></div>
+    <div class="why-card">
+      <div class="why-n">02</div>
+      <h3>Judgment is the hard half</h3>
+      <p>Raw numbers aren't a decision. The AI layer reads the position book or the vault and returns a verdict an agent can route on, grounded in facts computed before the model ever sees them.</p>
     </div>
-    <div class="svc-body"><div class="inner">
-      <div class="row">
-        <input id="vaultIn" placeholder="0x… vault address" spellcheck="false" />
-        <button class="run" id="vaultBtn">Run</button>
-      </div>
-      <div class="row" style="margin-top:10px"><span class="chip" data-fill="vaultIn" data-val="0xdfc24b077bc1425ad1dea75bcb6f8158e10df303">try: HLP vault</span></div>
-      <div class="out" id="vaultOut"></div>
-    </div></div>
-  </div>
-
-  <!-- svc 4: ai verdict -->
-  <div class="svc" data-svc="aivault">
-    <div class="svc-top">
-      <div class="svc-row">
-        <div>
-          <div class="svc-name">AI Vault Verdict</div>
-          <div class="svc-desc">Due diligence on a vault, then a follow / watch / avoid verdict with a score and the case for and against.</div>
-        </div>
-        <div class="svc-meta">
-          <span class="mbadge ai">✦ AI</span>
-          <span class="mbadge method">POST</span>
-        </div>
-      </div>
-      <div class="try"><a>Try this <span class="arr">→</span></a></div>
+    <div class="why-card">
+      <div class="why-n">03</div>
+      <h3>One shape, every time</h3>
+      <p>Same JSON envelope on every call, so an agent parses the response identically whether it asked for positions, a vault, or an AI verdict. Less glue, fewer breakages.</p>
     </div>
-    <div class="svc-body"><div class="inner">
-      <div class="row">
-        <input id="aivaultIn" placeholder="0x… vault address" spellcheck="false" />
-        <button class="run lime" id="aivaultBtn">✦ Get verdict</button>
-      </div>
-      <div class="row" style="margin-top:10px"><span class="chip" data-fill="aivaultIn" data-val="0xdfc24b077bc1425ad1dea75bcb6f8158e10df303">try: HLP vault</span></div>
-      <div class="out" id="aivaultOut"></div>
-    </div></div>
-  </div>
-
-  <!-- svc 5: discover -->
-  <div class="svc" data-svc="vaults">
-    <div class="svc-top">
-      <div class="svc-row">
-        <div>
-          <div class="svc-name">Discover Vaults</div>
-          <div class="svc-desc">A sortable shortlist across every live vault. Rank by TVL, APR or age.</div>
-        </div>
-        <div class="svc-meta">
-          <span class="mbadge method">GET</span>
-          <span class="mbadge">cached</span>
-        </div>
-      </div>
-      <div class="try"><a>Try this <span class="arr">→</span></a></div>
-    </div>
-    <div class="svc-body"><div class="inner">
-      <div class="row">
-        <select id="sortIn"><option value="tvl">Sort by TVL</option><option value="apr">Sort by APR</option><option value="createTimeMillis">Sort by newest</option></select>
-        <select id="orderIn"><option value="desc">High to low</option><option value="asc">Low to high</option></select>
-        <select id="limitIn"><option value="10">Top 10</option><option value="25" selected>Top 25</option><option value="50">Top 50</option></select>
-        <button class="run" id="vaultsBtn">Run</button>
-      </div>
-      <div class="out" id="vaultsOut"></div>
-    </div></div>
   </div>
 
   <footer>
@@ -339,123 +131,15 @@
 
 <script>
 const $ = s => document.querySelector(s);
-const fmtUsd = n => "$"+Number(n).toLocaleString(undefined,{maximumFractionDigits:2});
 const fmtUsdC = n => { n=Number(n); if(n>=1e9)return "$"+(n/1e9).toFixed(2)+"B"; if(n>=1e6)return "$"+(n/1e6).toFixed(2)+"M"; if(n>=1e3)return "$"+(n/1e3).toFixed(1)+"K"; return "$"+n.toFixed(0); };
-const fmtNum = n => Number(n).toLocaleString(undefined,{maximumFractionDigits:4});
-const pct = n => (Number(n)*100).toFixed(2)+"%";
-const short = a => a.slice(0,6)+"…"+a.slice(-4);
-const hlLink = a => `https://app.hyperliquid.xyz/explorer/address/${a}`;
-const signCls = n => Number(n)>=0?"pos":"neg";
-
-async function call(path, opts){
-  const r = await fetch(path, opts); const j = await r.json();
-  if(j.error) throw new Error(j.error); return j.data;
-}
-
-/* expand services */
-document.querySelectorAll(".svc-top").forEach(t=>{
-  t.onclick = e => {
-    if(e.target.closest("input,select,button,.chip")) return;
-    t.parentElement.classList.toggle("open");
-  };
-});
-document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ $("#"+c.dataset.fill).value=c.dataset.val; });
-
-/* stats */
-(async()=>{ try{ const s=await call("/stats");
+(async()=>{ try{ const r=await fetch("/stats"); const s=(await r.json()).data;
   $("#stVaults").textContent=s.totalVaults.toLocaleString();
   $("#stTvl").textContent=fmtUsdC(s.totalTvl);
   $("#stOpen").textContent=s.openVaults.toLocaleString();
 }catch(e){} })();
-
-/* ai status */
-let aiOn=false;
-(async()=>{ try{ aiOn=(await call("/ai/status")).enabled; }catch(e){ aiOn=false; }
-  $("#aiGhost").textContent = aiOn ? "● AI online" : "○ AI offline";
-  $("#aiGhost").style.color = aiOn ? "var(--green)" : "var(--faint)";
+(async()=>{ let on=false; try{ on=(await (await fetch("/ai/status")).json()).data.enabled; }catch(e){}
+  const g=$("#aiGhost"); g.textContent= on?"● AI online":"○ AI offline"; g.style.color= on?"var(--green)":"var(--faint)";
 })();
-const aiNote = `<div class="ai-panel"><div class="ai-bar">✦ AI offline</div><div class="ai-body"><div class="ai-note">Set <span class="mono">NVIDIA_API_KEY</span> (free at build.nvidia.com) to enable AI analysis on this instance.</div></div></div>`;
-
-/* renderers */
-function renderPositions(d, out){
-  if(!d.count){ out.innerHTML=`<div class="status">No open positions for this wallet.</div>`; return; }
-  const rows=d.positions.map(p=>`<tr>
-    <td class="name-sans">${p.coin}</td><td class="${p.side}">${p.side.toUpperCase()}</td>
-    <td>${fmtNum(p.size)}</td><td>${fmtUsd(p.entryPrice)}</td><td>${fmtUsd(p.positionValue)}</td>
-    <td class="${signCls(p.unrealizedPnl)}">${fmtUsd(p.unrealizedPnl)}</td><td class="${signCls(p.returnOnEquity)}">${pct(p.returnOnEquity)}</td>
-    <td>${p.liquidationPrice!=null?fmtUsd(p.liquidationPrice):"—"}</td><td>${p.leverage.value}× ${p.leverage.type}</td></tr>`).join("");
-  out.innerHTML=`<div class="status">${d.count} open position${d.count>1?"s":""}</div>
-    <div class="tbl-wrap"><table><thead><tr><th>Coin</th><th>Side</th><th>Size</th><th>Entry</th><th>Value</th><th>uPnL</th><th>ROE</th><th>Liq.</th><th>Leverage</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-}
-function renderRisk(a, out){
-  out.innerHTML=`<div class="ai-panel"><div class="ai-bar">✦ AI risk read</div><div class="ai-body">
-    <div class="verdict-row"><span class="badge-lvl lvl-${a.riskLevel}">Risk: ${a.riskLevel}</span>
-    <span class="badge-lvl" style="background:var(--surface2);color:var(--muted)">Bias: ${a.netBias}</span></div>
-    <p class="ai-sum">${a.summary}</p><div class="siglist">${(a.signals||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div></div>`;
-}
-function renderVault(d, out){
-  out.innerHTML=`<div class="vault-head"><h3>${d.name} ${d.isClosed?'<span class="short" style="font-size:12px">· closed</span>':''}</h3>
-    <p class="desc">${d.description||"No description."}</p></div>
-    <div class="cards">
-      <div class="mini"><div class="k">APR</div><div class="v ${signCls(d.apr)}">${pct(d.apr)}</div></div>
-      <div class="mini"><div class="k">Followers</div><div class="v">${d.followerCount}</div></div>
-      <div class="mini"><div class="k">Leader fee</div><div class="v">${pct(d.leaderCommission)}</div></div>
-      <div class="mini"><div class="k">Distributable</div><div class="v">${fmtUsdC(d.maxDistributable)}</div></div>
-      <div class="mini"><div class="k">Withdrawable</div><div class="v">${fmtUsdC(d.maxWithdrawable)}</div></div>
-      <div class="mini"><div class="k">Deposits</div><div class="v">${d.allowDeposits?"Open":"Closed"}</div></div></div>
-    <div class="meta">Leader <a href="${hlLink(d.leader)}" target="_blank">${short(d.leader)}</a> · Vault ${short(d.vaultAddress)}</div>`;
-}
-function renderVerdict(a, out){
-  out.innerHTML=`<div class="ai-panel"><div class="ai-bar">✦ AI verdict</div><div class="ai-body">
-    <div class="verdict-row"><span class="badge-lvl v-${a.verdict}">${a.verdict}</span><span class="score">Score ${a.score}/100</span></div>
-    <p class="ai-sum">${a.summary}</p>
-    <div class="twocol"><div><h4>For</h4><div class="siglist">${(a.pros||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div>
-    <div><h4>Against</h4><div class="siglist">${(a.cons||[]).map(s=>`<div class="sig">${s}</div>`).join("")}</div></div></div></div></div>`;
-}
-
-/* handlers */
-function addr(v){ return /^0x[a-fA-F0-9]{40}$/.test(v.trim()); }
-
-$("#walletBtn").onclick=async()=>{ const w=$("#walletIn").value.trim(), out=$("#walletOut");
-  if(!addr(w)){ out.innerHTML=`<div class="status err">Enter a valid 0x wallet address.</div>`; return; }
-  out.innerHTML=`<div class="status">Loading positions…</div>`;
-  try{ renderPositions(await call("/positions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({wallet:w})}), out); }
-  catch(e){ out.innerHTML=`<div class="status err">${e.message}</div>`; } };
-
-$("#airiskBtn").onclick=async()=>{ const w=$("#airiskIn").value.trim(), out=$("#airiskOut");
-  if(!addr(w)){ out.innerHTML=`<div class="status err">Enter a valid 0x wallet address.</div>`; return; }
-  if(!aiOn){ out.innerHTML=aiNote; return; }
-  out.innerHTML=`<div class="status">✦ Reading risk… (model thinking)</div>`;
-  try{ renderRisk((await call("/analyze/positions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({wallet:w})})).analysis, out); }
-  catch(e){ out.innerHTML=`<div class="status err">AI: ${e.message}</div>`; } };
-
-$("#vaultBtn").onclick=async()=>{ const v=$("#vaultIn").value.trim(), out=$("#vaultOut");
-  if(!addr(v)){ out.innerHTML=`<div class="status err">Enter a valid 0x vault address.</div>`; return; }
-  out.innerHTML=`<div class="status">Loading vault…</div>`;
-  try{ renderVault(await call("/vault",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({vault:v})}), out); }
-  catch(e){ out.innerHTML=`<div class="status err">${e.message}</div>`; } };
-
-$("#aivaultBtn").onclick=async()=>{ const v=$("#aivaultIn").value.trim(), out=$("#aivaultOut");
-  if(!addr(v)){ out.innerHTML=`<div class="status err">Enter a valid 0x vault address.</div>`; return; }
-  if(!aiOn){ out.innerHTML=aiNote; return; }
-  out.innerHTML=`<div class="status">✦ Running due diligence… (model thinking)</div>`;
-  try{ renderVerdict((await call("/analyze/vault",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({vault:v})})).analysis, out); }
-  catch(e){ out.innerHTML=`<div class="status err">AI: ${e.message}</div>`; } };
-
-$("#vaultsBtn").onclick=async()=>{ const out=$("#vaultsOut");
-  const sort=$("#sortIn").value, order=$("#orderIn").value, limit=$("#limitIn").value;
-  out.innerHTML=`<div class="status">Loading vaults…</div>`;
-  try{ const d=await call(`/vaults?sort=${sort}&order=${order}&limit=${limit}`);
-    const rows=d.vaults.map((v,i)=>`<tr><td>${i+1}</td><td class="name-sans">${v.name}</td>
-      <td><a href="${hlLink(v.vaultAddress)}" target="_blank">${short(v.vaultAddress)}</a></td>
-      <td>${fmtUsdC(v.tvl)}</td><td class="${signCls(v.apr)}">${pct(v.apr)}</td>
-      <td class="${v.status==='open'?'long':'short'}">${v.status}</td><td>${new Date(v.createTimeMillis).toLocaleDateString()}</td></tr>`).join("");
-    out.innerHTML=`<div class="status">Showing ${d.count} of ${d.total.toLocaleString()} vaults</div>
-      <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Name</th><th>Address</th><th>TVL</th><th>APR</th><th>Status</th><th>Created</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-  }catch(e){ out.innerHTML=`<div class="status err">${e.message}</div>`; } };
-
-/* open the first service by default */
-document.querySelector('.svc[data-svc="positions"]').classList.add("open");
 </script>
 </body>
 </html>

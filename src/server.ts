@@ -1,4 +1,5 @@
 import express from "express";
+import path from "node:path";
 import { ok, fail } from "./envelope.js";
 import {
   getPositions,
@@ -24,6 +25,11 @@ const PORT = Number(process.env.PORT ?? 3000);
 function isAddress(v: unknown): v is string {
   return typeof v === "string" && /^0x[a-fA-F0-9]{40}$/.test(v.trim());
 }
+
+// clean URL for the app workspace page
+app.get("/app", (_req, res) => {
+  res.sendFile(path.join(process.cwd(), "public", "app.html"));
+});
 
 app.get("/api", (_req, res) => {
   res.json(
