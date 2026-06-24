@@ -534,7 +534,13 @@ app.post("/analyze/vault", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`hyperscope listening on :${PORT}`);
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`hyperscope listening on :${PORT}`);
+    warmVaultCache();
+  });
+} else {
   warmVaultCache();
-});
+}
+
+export default app;
