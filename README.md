@@ -104,7 +104,12 @@ curl "localhost:3000/vaults?sort=apr&order=desc&limit=10"
 
 The HTTP API is great if you're writing your own client, but a lot of agents speak [Model Context Protocol](https://modelcontextprotocol.io) now, so HyperScope ships an MCP server too. It exposes all sixteen tools (under `hyperliquid_*` names) over stdio, reusing the exact same data and AI functions, so any MCP-aware agent (Claude Desktop, Cursor, your own runtime) can plug it in and reason with Hyperliquid directly, no glue code.
 
-Build once, then point your agent at it:
+For agents that support short commands (like Cursor or Roo Code), you can simply point them straight to the GitHub repo:
+```bash
+npx -y github:Jr-kenny/hyperscope
+```
+
+For Claude Desktop or agents requiring a manual config file, build it locally first:
 
 ```bash
 npm install && npm run build

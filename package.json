@@ -4,6 +4,9 @@
   "description": "Hyperliquid data tools for trading agents: perception, monitoring, and evaluation. Built for the Bitget AI Hackathon S1 (Trading Infra track).",
   "type": "module",
   "main": "dist/server.js",
+  "bin": {
+    "hyperscope": "dist/mcp.js"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",

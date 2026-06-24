@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // MCP server for HyperScope. Exposes the same read-only Hyperliquid perception
 // tools (and the AI layer) over the Model Context Protocol, so any MCP-aware
 // agent (Claude, Cursor, and friends) can plug HyperScope in and reason with it
