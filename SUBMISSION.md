@@ -13,13 +13,14 @@ Right now every builder writes that plumbing themselves. You POST to Hyperliquid
 
 ## What it is
 
-HyperScope is a small read-only service that turns those three questions into clean JSON an agent can consume directly, with no API keys and no setup. Three endpoints:
+HyperScope is a service that turns those questions into clean JSON an agent can consume directly, with minimal setup. Sixteen endpoints across five groups:
 
-- `POST /positions` with a wallet, get back every open perp position already normalized: coin, side, size, entry price, position value, unrealized PnL, liquidation price, return on equity, and leverage.
-- `POST /vault` with a vault address, get the full picture: leader, strategy, APR, follower count, commission terms, how much is distributable and withdrawable, whether it's taking deposits.
-- `GET /vaults`, get a sortable shortlist out of the ~9,400 live vaults, ranked by TVL, APR, or age.
+- `POST /perceive/*` to get normalized open perp positions, wallet fills, coin markets, order books, and vault status.
+- `POST /monitor/*` and `POST /evaluate/*` to track real-time exposure, calculate performance metrics, generate equity curves, and perform drawdown analysis.
+- `POST /analyze/*` to run AI-driven evaluations on a wallet's positions, a vault's prospects, or a trader's overall performance.
+- `GET /vaults` (in `/perceive`), get a sortable shortlist out of the ~9,400 live vaults, ranked by TVL, APR, or age.
 
-Every call comes back in the same envelope, version, the service that answered, the request it got, and the data, so an agent parses the response the same way every single time. That consistency is the actual product. An agent doesn't want three different shapes to handle, it wants one.
+Every call comes back in the same envelope, version, the service that answered, the request it got, and the data, so an agent parses the response the same way every single time. That consistency is the actual product. An agent doesn't want sixteen different shapes to handle, it wants one.
 
 ## How it works and how you can check it
 
@@ -27,10 +28,10 @@ Underneath it's all Hyperliquid's own public data, nothing private. Positions an
 
 The code is in three layers on purpose. The data layer is pure functions with no web framework anywhere near them, so the same logic can back an MCP server or a CLI later without a rewrite. On top of that sits a shared response envelope, and then a thin Express layer that validates input and wraps each call.
 
-You don't have to take my word that it runs. The repo has a `samples/` folder with real captured responses from a live run: a vault holding 34 open positions with every field populated, the HLP vault review, and the top vaults by TVL. The README walks another developer from install to all three endpoints in a few curl commands. It's deployable as-is, there's a `render.yaml` in the repo.
+You don't have to take my word that it runs. The repo has a `samples/` folder with real captured responses from a live run: a vault holding 34 open positions with every field populated, the HLP vault review, and the top vaults by TVL. The README walks another developer from install to all sixteen endpoints in a few curl commands. It's deployable as-is, there's a `render.yaml` in the repo.
 
 ## Why it matters and where it goes
 
 This is the unglamorous layer the agentic trading era actually runs on. An agent is only as good as what it can perceive, and perception starts with reliable, normalized market state. HyperScope makes that a one-line call instead of fifty lines of boilerplate that each builder reinvents and each one gets subtly wrong.
 
-Because the core logic is already framework-free, the natural next step is an MCP server exposing these same three tools, so any agent in Claude, Cursor, or Codex can call them directly. After that, more perception primitives on the same envelope: funding rates, open interest, recent fills for a wallet. The shape stays the same, the agent's parsing never changes, the toolbox just grows.
+Because the core logic is already framework-free, HyperScope includes an MCP server exposing these exact same sixteen tools, so any agent in Claude, Cursor, or Codex can call them directly. The shape stays the same, the agent's parsing never changes, the toolbox just grows.

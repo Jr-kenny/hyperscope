@@ -1,7 +1,7 @@
 {
   "name": "hyperscope",
   "version": "0.1.0",
-  "description": "Read-only Hyperliquid data tools for trading agents: open perp positions, vault review, and vault discovery. Built for the Bitget AI Hackathon S1 (Trading Infra track).",
+  "description": "Hyperliquid data tools for trading agents: perception, monitoring, and evaluation. Built for the Bitget AI Hackathon S1 (Trading Infra track).",
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
