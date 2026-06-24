@@ -2,7 +2,7 @@
   --bg:#eef0e8; --surface:#ffffff; --surface2:#f5f6f0;
   --ink:#101310; --muted:#878d83; --faint:#a7ada3;
   --line:#e5e7df; --line2:#d8dbd0;
-  --lime:#8ef23d; --lime-hi:#7ee52a; --lime-soft:#e7fbcf;
+  --lime:#38bdf8; --lime-hi:#0ea5e9; --lime-soft:#e0f2fe;
   --green:#3b82f6;
   --long:#3a9e12; --short:#e0483d; --blue:#2f7de0;
   --shadow:0 1px 2px rgba(16,20,15,.04), 0 10px 30px -16px rgba(16,20,15,.14);
@@ -25,7 +25,7 @@ a:hover{text-decoration:underline}
 .brand a{color:inherit}
 .mark{width:34px;height:34px;border-radius:9px;background:var(--lime);display:grid;place-items:center;
   color:var(--ink);font-family:"JetBrains Mono";font-weight:700;font-size:19px}
-.brand b{font-weight:800;letter-spacing:-.02em;font-size:16px}
+.brand b{font-weight:800;letter-spacing:-.02em;font-size:16px;color:var(--green)}
 .brand .crumb{font-family:"JetBrains Mono";font-size:12px;color:var(--faint);letter-spacing:.06em}
 .nav-right{display:flex;align-items:center;gap:16px}
 .ghost{font-family:"JetBrains Mono";font-size:12px;color:var(--muted);font-weight:500}
